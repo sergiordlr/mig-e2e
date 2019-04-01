@@ -1,0 +1,62 @@
+---
+- name: Check the Namespace
+  k8s_facts:
+    kind: Namespace
+    name: mysql-persistent
+  register: namespace
+  until: namespace.get("resources", []) and namespace.resources[0].get("status", {}).get("phase", "") == "Active"
+
+---
+- name: Check the Secret
+  k8s_facts:
+    kind: Secret
+    name: mysql
+    namespace: mysql-persistent
+  register: secret
+  until: namespace.get("resources", []) and namespace.resources[0].get("metadata", {}).get("name", "") == "mysql"
+
+---
+- name: Check the Service
+  k8s_facts:
+    kind: Service
+    api_version: v1
+    name: mysql
+    namespace: mysql-persistent
+  register: service
+  until: service.get("resources", [])
+
+---
+- name: Wait for mysql with pvc deployment
+  k8s_facts:
+    kind: Pod
+    namespace: mysql-persistent
+    label_selectors: "deployment=mysql-1"
+  register: pod
+  until: pod.get("resources", []) and pod.resources[0].get("status", {}).get("phase", "") == "Running"
+
+---
+- name: Check if volume is bound
+  k8s_facts:
+    kind: PersistentVolumeClaim
+    namespace: mysql-persistent
+    label_selectors: "app=mysql"
+  register: volume
+  until: volume.get("resources", []) and volume.resources[0].get("status", {}).get("phase", "") == "Bound"
+
+---
+- name: Check the DeploymentConfig
+  k8s_facts:
+    kind: DeploymentConfig
+    name: mysql
+    namespace: mysql-persistent
+  register: dc
+  until: dc.resources[0].status.conditions[0].get("type", "[]")  == "Available"
+
+---
+- name: Check the ReplicationController
+  k8s_facts:
+    kind: ReplicationController
+    name: mysql-1
+    namespace: mysql-persistent
+  register: rc
+  until: rc.resources[0].get("spec", {}).get("replicas", "") == rc.resources[0].get("status", {}).get("replicas", 1)

@@ -1,0 +1,22 @@
+- name: Get the checksum
+  vars:
+    pod_name: "{{ pod.resources[0].get('metadata', {}).get('name', '') }}"
+  shell: oc exec -n mysql-persistent {{ pod_name }} -- /bin/bash -c "md5sum /var/lib/mysql/data/MYSQL_DATABASE/t1.ibd | cut -d ' ' -f 1"
+  register: checksum_before
+
+- name: Check if data are restored
+  vars:
+    pod_name: "{{ pod.resources[0].get('metadata', {}).get('name', '') }}"
+  shell: oc exec -n mysql-persistent {{ pod_name }} -- /bin/bash -c "du -h /var/lib/mysql | awk '/MYSQL_DATABASE/ {print}' | cut -f1"
+  register: database_size
+  until: database_size.get("stdout", "") == "49M"
+
+- debug:
+    var: database_size.get("stdout", "")
+
+- name: Check the checksum
+  vars:
+    pod_name: "{{ pod.resources[0].get('metadata', {}).get('name', '') }}"
+  shell: oc exec -n mysql-persistent {{ pod_name }} -- /bin/bash -c "md5sum /var/lib/mysql/data/MYSQL_DATABASE/t1.ibd | cut -d ' ' -f 1"
+  register: checksum_after
+  until: checksum_after.get("stdout", "") == checksum_before.get("stdout", "")

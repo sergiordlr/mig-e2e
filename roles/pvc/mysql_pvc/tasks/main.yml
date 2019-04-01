@@ -1,0 +1,5 @@
+- name: Check the resources
+  include: resources.yml
+
+- name: Check the database
+  include: database.yml
