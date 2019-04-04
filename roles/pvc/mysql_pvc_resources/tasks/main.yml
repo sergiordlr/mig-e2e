@@ -6,16 +6,14 @@
   register: namespace
   until: namespace.get("resources", []) and namespace.resources[0].get("status", {}).get("phase", "") == "Active"
 
----
 - name: Check the Secret
   k8s_facts:
     kind: Secret
     name: mysql
     namespace: mysql-persistent
   register: secret
-  until: namespace.get("resources", []) and namespace.resources[0].get("metadata", {}).get("name", "") == "mysql"
+  until: secret.get("resources", []) and secret.resources[0].get("metadata", {}).get("name", "") == "mysql"
 
----
 - name: Check the Service
   k8s_facts:
     kind: Service
@@ -25,16 +23,14 @@
   register: service
   until: service.get("resources", [])
 
----
-- name: Wait for mysql with pvc deployment
+- name: Check if pod is ready and running
   k8s_facts:
     kind: Pod
     namespace: mysql-persistent
     label_selectors: "deployment=mysql-1"
   register: pod
-  until: pod.get("resources", []) and pod.resources[0].get("status", {}).get("phase", "") == "Running"
+  until: pod.resources[0].get("status", {}).get("phase", "") == "Running" and pod.resources[0].get("status", {}).containerStatuses[0].get("ready", "") == true
 
----
 - name: Check if volume is bound
   k8s_facts:
     kind: PersistentVolumeClaim
@@ -43,7 +39,6 @@
   register: volume
   until: volume.get("resources", []) and volume.resources[0].get("status", {}).get("phase", "") == "Bound"
 
----
 - name: Check the DeploymentConfig
   k8s_facts:
     kind: DeploymentConfig
@@ -52,7 +47,6 @@
   register: dc
   until: dc.resources[0].status.conditions[0].get("type", "[]")  == "Available"
 
----
 - name: Check the ReplicationController
   k8s_facts:
     kind: ReplicationController
