@@ -1,0 +1,30 @@
+- name: Create velero backup of resources
+  k8s:
+    state : present
+    definition: 
+      apiVersion: velero.io/v1
+      kind: Backup
+      metadata:
+        name: "{{ backup_name }}"
+        namespace: velero
+      spec:
+        labelSelector:
+          matchLabels:
+            app: "{{ backup_label }}"
+        storageLocation: default
+        ttl: 720h0m0s
+        includedNamespaces:
+        - '*'
+
+- name: Wait for backup to complete
+  k8s_facts:
+    kind: Backup
+    api_version: velero.io/v1
+    namespace: velero
+    name: "{{ backup_name }}"
+  register: backup
+  until:  backup.get("resources", []) | length > 0
+          and backup.resources[0].get("status", {}).get("phase", "Completed")
+          == "Completed"
+  retries: 120
+  delay: 5
