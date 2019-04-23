@@ -7,3 +7,4 @@ with_resources: true
 with_backup: true
 with_restore: true
 with_data: false
+delete_after_backup: false
