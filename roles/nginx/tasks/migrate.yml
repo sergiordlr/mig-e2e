@@ -37,6 +37,11 @@
 - debug:
     msg: "Created migration plan : {{ migration_plan_name }}"
 
+# Fix me: https://github.com/fusor/mig-controller/issues/84
+- name: Allow velero to reconcile changes before attempting migration
+  pause:
+    seconds: 60
+
 - name: Execute migration
   k8s:
     state: present

@@ -6,7 +6,7 @@
     namespace: mig
     name: "{{ migration_name }}" 
   register: backup
-  until: backup.resources[0].status.phase == "BackupStarted"
+  until: backup.resources[0].get("status", {}).get("phase", "") == "BackupStarted"
   retries: 60
   delay: 5
 
@@ -17,7 +17,8 @@
     namespace: mig
     name: "{{ migration_name }}"
   register: restore
-  until: restore.resources[0].status.phase == "RestoreStarted"
+#  until: restore.resources[0].status.phase == "RestoreStarted"
+  until: restore.resources[0].get("status", {}).get("phase", "") == "RestoreStarted"
   retries: 60
   delay: 5
 
@@ -28,6 +29,7 @@
     namespace: mig
     name: "{{ migration_name }}"
   register: migration
-  until: migration.resources[0].status.phase == "Completed"
+#  until: migration.resources[0].status.phase == "Completed"
+  until: migration.resources[0].get("status", {}).get("phase", "") == "Completed"
   retries: 60
   delay: 5
