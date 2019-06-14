@@ -1,0 +1,7 @@
+- name: Deploy nginx from yaml
+  k8s:
+    state : present
+    definition: "{{ lookup('file', 'nginx.yml')}}"
+
+- name: Check if deployed 
+  include: check.yml

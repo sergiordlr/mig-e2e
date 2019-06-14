@@ -1,0 +1,6 @@
+- hosts: localhost
+  roles:
+    - nginx
+  vars_files:
+    - "{{ playbook_dir }}/config/mig_controller.yml"
+
