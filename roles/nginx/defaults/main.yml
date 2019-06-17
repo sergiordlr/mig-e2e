@@ -1,0 +1,7 @@
+---
+migration_plan_name: nginx-migplan-{{ ansible_date_time.epoch }}
+migration_name: nginx-mig-{{ ansible_date_time.epoch }}
+with_deploy: true
+with_migrate: true
+namespaces:
+- nginx-example
