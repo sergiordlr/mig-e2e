@@ -1,0 +1,7 @@
+- hosts: localhost
+  roles:
+    - stateless
+    - local-images
+    - nfs-pv
+  vars_files:
+    - "{{ playbook_dir }}/config/mig_controller.yml"

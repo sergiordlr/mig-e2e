@@ -1,0 +1,15 @@
+---
+- name: Prepare samples repo
+  import_tasks: prepare.yml
+
+- name: Create resources
+  import_tasks: deploy.yml
+  when: with_deploy|bool
+
+- name: Start migration
+  import_tasks: migrate.yml
+  when: with_migrate|bool
+
+- name: Track migration
+  import_tasks: track.yml
+  when: with_migrate|bool

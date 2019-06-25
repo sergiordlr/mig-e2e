@@ -1,0 +1,18 @@
+- name: Obtain mysql pod name
+  k8s_facts:
+    kind: Pod
+    namespace: "{{ namespace }}"
+    label_selectors: "app=mysql"
+  register: mysql_pod
+
+- set_fact:
+    mysql_pod_name: "{{ mysql_pod.resources[0].metadata.name }}"
+
+- name: Allow mysql to initialize
+  pause:
+    seconds: 15
+
+- name: Load sample SQL data
+  shell: |
+          oc cp -n {{ namespace }} {{ migration_sample_files }}/data.sql {{ mysql_pod_name }}:/opt/app-root/src
+          oc exec -n {{ namespace }} {{ mysql_pod_name }} -- /bin/bash -c "mysql -uMYSQL_USER -pMYSQL_PASSWORD MYSQL_DATABASE < /opt/app-root/src/data.sql"

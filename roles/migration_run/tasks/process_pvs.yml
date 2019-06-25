@@ -1,0 +1,28 @@
+---
+- name: Allow mig-controller to discover PVs prior migration
+  pause:
+    seconds: 30
+
+- name: Check for discovered PVs
+  k8s_facts:
+    kind: MigPlan
+    api_version: v1alpha1
+    namespace: mig
+    name: "{{ migration_plan_name }}" 
+  register: mig_plan
+
+- set_fact:
+    pvs_discovered: "{{ item }}"
+  loop: "{{ mig_plan.resources[0].spec.persistentVolumes }}"
+  register: all_pvs
+
+- set_fact: 
+    pv_list: "{{ all_pvs.results | map(attribute='ansible_facts.pvs_discovered.name') | list }}" 
+
+- debug:
+    msg: "PVs discovered : {{ pv_list }}"
+
+- name: Modify migration plan with PVs..
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'mig-plan-pv.yml.j2') }}"
