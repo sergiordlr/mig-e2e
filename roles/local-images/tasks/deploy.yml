@@ -38,10 +38,6 @@
 - set_fact:
     registry_host: "{{ registry_info.stdout }}"
 
-- name: Allow s2i image to settle before running tests
-  pause:
-    seconds: 15
-
 - name: Run tests
   shell: "{{ item }}"
   with_items:

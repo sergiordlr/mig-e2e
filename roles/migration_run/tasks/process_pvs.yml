@@ -20,7 +20,9 @@
     pv_list: "{{ all_pvs.results | map(attribute='ansible_facts.pvs_discovered.name') | list }}" 
 
 - debug:
-    msg: "PVs discovered : {{ pv_list }}"
+    msg:
+    - "PVs discovered: {{ pv_list | join(' ') }}"
+    - "PV action: {{ pv_action }}"
 
 - name: Modify migration plan with PVs..
   k8s:
