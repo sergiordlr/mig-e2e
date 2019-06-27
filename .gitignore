@@ -1,3 +1,4 @@
 *.retry
 *.swp
 config/mig_controller.yml
+mig-controller/*

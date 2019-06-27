@@ -26,18 +26,32 @@ See below for a decription of these paremeters :
 
 ## Other considerations
 
-* You must be _logged in_ to the cluster where mig-controller is running before attempting to run tests
-* By default, the source cluster is assumed to be the host for mig-controller
+* You must active sessions on the source and destination clusters before attempting to run any tests
+* By default, the destination cluster (OCP4) is assumed to be the host for mig-controller
+* Stateful applications tests such as nfs-pv require PVs to allocated on source and destination clusters
 
-## Running tests
+## Running mig-controller sample tests
 
-The following example test will deploy and migrate nginx
+On the **source** cluster, deploy **all** sample tests
 
 ```bash
-$ ansible-playbook nginx.yml
+$ ansible-playbook mig_controller_samples.yml -e "with_migrate=false"
 ```
 
-The migration will be tracked to completion, you can also check the status of each _phase of the migration_ using : 
+On the **destination** cluster (mig-controller host) , migrate **all** sample tests
+
+```bash
+$ ansible-playbook mig_controller_samples.yml -e "with_deploy=false"
+```
+
+Alternatively you can deploy (or migrate) a single or multiple sample tests by using tags
+
+```bash
+ansible-playbook mig_controller_samples.yml --tags=stateless -e "with_migrate=false"
+ansible-playbook mig_controller_samples.yml --tags=stateless,local-images -e "with_deploy=false"
+```
+
+The migrations will be tracked to completion, you can also check the status of each _phase of the migration_ using : 
 
 ```bash
 $ oc -n mig describe migmigration nginx-mig-1560432273

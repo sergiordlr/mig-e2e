@@ -1,0 +1,12 @@
+---
+migration_sample_name: nfs-pv
+migration_plan_name: "{{ migration_sample_name }}-migplan-{{ ansible_date_time.epoch }}"
+migration_name: "{{ migration_sample_name}}-mig-{{ ansible_date_time.epoch }}"
+migration_sample_files: "{{ playbook_dir }}/mig-controller/docs/scenarios/{{ migration_sample_name }}"
+pv: true
+pv_action: move
+quiesce: true
+oc_binary: "oc"
+with_deploy: true
+with_migrate: true
+namespace: mysql-persistent

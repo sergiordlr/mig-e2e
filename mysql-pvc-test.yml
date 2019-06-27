@@ -1,4 +1,0 @@
-- hosts: localhost
-  roles:
-    - pvc/mysql_pvc_resources
-    - pvc/mysql_pvc_database

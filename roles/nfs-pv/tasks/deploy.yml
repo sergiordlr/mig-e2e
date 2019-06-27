@@ -1,0 +1,10 @@
+- name: Deploy mysql sample
+  k8s:
+    state : present
+    definition: "{{ lookup('file', '{{ migration_sample_files }}/mysql-persistent-template.yaml' )}}"
+
+- name: Check if deployed 
+  include: check.yml
+
+- name: Load sample data
+  include: load_data.yml
