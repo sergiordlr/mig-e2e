@@ -30,18 +30,25 @@ See below for a decription of these paremeters :
 * By default, the destination cluster (OCP4) is assumed to be the host for mig-controller
 * Stateful applications tests such as nfs-pv require PVs to allocated on source and destination clusters
 
-## Running tests
+## Running mig-controller sample tests
 
-On the **source** cluster, deploy the mig sample tests
+On the **source** cluster, deploy **all** sample tests
 
 ```bash
 $ ansible-playbook mig_controller_samples.yml -e "with_migrate=false"
 ```
 
-On the **destination** cluster (mig-controller host) , run migrations
+On the **destination** cluster (mig-controller host) , migrate **all** sample tests
 
 ```bash
 $ ansible-playbook mig_controller_samples.yml -e "with_deploy=false"
+```
+
+Alternatively you can deploy (or migrate) a single or multiple sample tests by using tags
+
+```bash
+ansible-playbook mig_controller_samples.yml --tags=stateless -e "with_migrate=false"
+ansible-playbook mig_controller_samples.yml --tags=stateless,local-images -e "with_deploy=false"
 ```
 
 The migrations will be tracked to completion, you can also check the status of each _phase of the migration_ using : 

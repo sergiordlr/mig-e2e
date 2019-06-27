@@ -5,7 +5,7 @@
 
 - name: Clone the mig-controller repo
   git:
-    repo: 'https://github.com/fusor/mig-controller.git'
+    repo: "{{ migration_controller_repo }}"
     dest: "{{ playbook_dir }}/mig-controller"
     force: true
   when: not repo.stat.exists

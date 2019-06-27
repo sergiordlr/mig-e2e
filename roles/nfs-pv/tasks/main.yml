@@ -1,6 +1,8 @@
 ---
+
 - name: Prepare samples repo
-  import_tasks: prepare.yml
+  include_role:
+    name: migration_prepare
 
 - name: Create resources
   import_tasks: deploy.yml

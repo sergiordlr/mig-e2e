@@ -1,7 +1,7 @@
 - hosts: localhost
   roles:
-    - stateless
-    - local-images
-    - nfs-pv
+    - { role: stateless, tags: ["stateless"] }
+    - { role: local-images, tags: ["local-images"] }
+    - { role: nfs-pv, tags: ["nfs-pv"] }
   vars_files:
     - "{{ playbook_dir }}/config/mig_controller.yml"
