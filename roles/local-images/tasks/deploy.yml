@@ -15,7 +15,7 @@
     state: present
 
 - name: Build sample new-app using s2i
-  shell: "oc -n {{ namespace }} new-app {{ s2i_app_location }}"
+  shell: "{{ oc_client }} -n {{ namespace }} new-app {{ s2i_app_location }}"
 
 - name: Check s2i build is completed
   k8s_facts:
@@ -29,10 +29,10 @@
   delay: 5
 
 - name: Create route
-  shell: "oc -n {{ namespace }} expose service {{ s2i_app_location|basename }}"
+  shell: "{{ oc_client }} -n {{ namespace }} expose service {{ s2i_app_location|basename }}"
 
 - name: Obtain registry host
-  shell: "oc registry info"
+  shell: "{{ oc_client }} registry info"
   register: registry_info
 
 - set_fact:
@@ -41,13 +41,13 @@
 - name: Run tests
   shell: "{{ item }}"
   with_items:
-    - "oc run test-dc --image={{ registry_host }}/{{ namespace }}/{{ s2i_app_location|basename }}:latest -n {{ namespace }}"
-    - "oc run test-job --image={{ registry_host }}/{{ namespace}}/{{ s2i_app_location|basename }}:latest -n {{ namespace }} --restart='OnFailure'"
-    - "oc run test-standalone --image={{ registry_host}}/{{ namespace }}/{{ s2i_app_location|basename }} -n {{ namespace }} --restart='Never'"
+    - "{{ oc_client }} run test-dc --image={{ registry_host }}/{{ namespace }}/{{ s2i_app_location|basename }}:latest -n {{ namespace }}"
+    - "{{ oc_client }} run test-job --image={{ registry_host }}/{{ namespace}}/{{ s2i_app_location|basename }}:latest -n {{ namespace }} --restart='OnFailure'"
+    - "{{ oc_client }} run test-standalone --image={{ registry_host}}/{{ namespace }}/{{ s2i_app_location|basename }} -n {{ namespace }} --restart='Never'"
 
 # Fix: By default mig-controller sample shell scripts expect to be in the correct project 
 - name: Deploy resources using s2i image
-  shell: "oc project {{ namespace }} && {{ migration_sample_files }}/{{ item|basename }}"
+  shell: "{{ oc_client }} project {{ namespace }} && {{ migration_sample_files }}/{{ item|basename }}"
   with_fileglob:
     - "{{ migration_sample_files }}/*.sh"
 
