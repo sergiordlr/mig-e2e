@@ -10,8 +10,8 @@
 
 - name: Load sample SQL data
   shell: |
-          {{ oc_client }} cp -n {{ namespace }} {{ migration_sample_files }}/data.sql {{ mysql_pod_name }}:/opt/app-root/src
-          {{ oc_client }} exec -n {{ namespace }} {{ mysql_pod_name }} -- /bin/bash -c "mysql -uMYSQL_USER -pMYSQL_PASSWORD MYSQL_DATABASE < /opt/app-root/src/data.sql"
+          {{ oc_binary }} cp -n {{ namespace }} {{ migration_sample_files }}/data.sql {{ mysql_pod_name }}:/opt/app-root/src
+          {{ oc_binary }} exec -n {{ namespace }} {{ mysql_pod_name }} -- /bin/bash -c "mysql -uMYSQL_USER -pMYSQL_PASSWORD MYSQL_DATABASE < /opt/app-root/src/data.sql"
   retries: 6
   delay: 10
   register: load_data
