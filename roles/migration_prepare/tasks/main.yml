@@ -1,11 +1,6 @@
-- name: Check that mig-controller repo exists
-  stat:
-    path: "{{ playbook_dir }}/mig-controller"
-  register: repo
+- name: Prepare mig-controller repo
+  import_tasks: prepare_repo.yml
 
-- name: Clone the mig-controller repo
-  git:
-    repo: "{{ migration_controller_repo }}"
-    dest: "{{ playbook_dir }}/mig-controller"
-    force: true
-  when: not repo.stat.exists
+- name: Prepare clusters for migration
+  import_tasks: prepare_clusters.yml
+  when: with_migrate|bool

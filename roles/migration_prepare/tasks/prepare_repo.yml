@@ -1,0 +1,11 @@
+- name: Check that mig-controller repo exists
+  stat:
+    path: "{{ playbook_dir }}/mig-controller"
+  register: repo
+
+- name: Clone the mig-controller repo
+  git:
+    repo: "{{ mig_controller_repo }}"
+    dest: "{{ playbook_dir }}/mig-controller"
+    force: true
+  when: not repo.stat.exists

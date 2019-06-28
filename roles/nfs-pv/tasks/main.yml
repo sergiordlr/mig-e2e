@@ -1,9 +1,5 @@
 ---
 
-- name: Prepare samples repo
-  include_role:
-    name: migration_prepare
-
 - name: Create resources
   import_tasks: deploy.yml
   when: with_deploy|bool
