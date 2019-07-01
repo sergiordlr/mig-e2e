@@ -1,15 +1,15 @@
 ---
-- name: "Check if {{ item | default('BackupStarted') }} phase is active"
+- name: "Check if {{ item[0] | default('BackupStarted') }} phase is active"
   k8s_facts:
     kind: MigMigration
     api_version: v1alpha1
     namespace: mig
-    name: "{{ migration_name }}" 
+    name: "{{ migration_name }}"
   register: mig_phase
-  until: mig_phase.resources[0].get("status", {}).get("phase", "") ==  item
+  until: mig_phase.resources[0].get("status", {}).get("phase", "") in item
   retries: 60
   delay: 5
-  with_items:
-    - "BackupStarted"
-    - "RestoreStarted"
-    - "Completed"
+  loop:
+    - ['BackupStarted', 'RestoreStarted', 'Completed']
+    - ['RestoreStarted', 'Completed']
+    - ['Completed']
