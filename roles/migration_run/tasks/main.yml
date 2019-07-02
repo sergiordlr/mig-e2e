@@ -14,6 +14,11 @@
   import_tasks: process_pvs.yml
   when: pv|default(false)|bool == true
 
+# Fix me: https://github.com/fusor/mig-controller/issues/84
+- name: Allow velero to reconcile changes before attempting migration
+  pause:
+    seconds: "{{ mig_velero_timeout }}"
+
 - name: Execute migration
   k8s:
     state: present
