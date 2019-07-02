@@ -32,8 +32,3 @@
   k8s:
     state: present
     definition: "{{ lookup('template', 'mig-storage.yml.j2') }}"
-
-# Fix me: https://github.com/fusor/mig-controller/issues/84
-- name: Allow velero to reconcile changes before attempting migration
-  pause:
-    seconds: "{{ mig_velero_timeout }}"

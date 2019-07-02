@@ -1,3 +1,2 @@
 ---
 mig_controller_repo: "https://github.com/fusor/mig-controller.git"
-mig_velero_timeout: 60
