@@ -1,4 +1,8 @@
 ---
+- name: Cleanup resources
+  include_role:
+    name: migration_cleanup
+  when: with_cleanup|bool
 
 - name: Create resources
   import_tasks: deploy.yml

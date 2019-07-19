@@ -9,4 +9,5 @@ quiesce: true
 oc_binary: "oc"
 with_deploy: true
 with_migrate: true
+with_cleanup: true
 namespace: mysql-persistent
