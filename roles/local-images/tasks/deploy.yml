@@ -1,12 +1,3 @@
-# Always re-build on new namespace
-- name: Ensure namespace is absent before continuing...
-  k8s:
-    name: "{{ namespace }}"
-    api_version: v1
-    kind: Namespace
-    state: absent
-    wait: yes
-
 - name: Create namespace for local-images
   k8s:
     name: "{{ namespace }}"
