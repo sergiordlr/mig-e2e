@@ -6,6 +6,7 @@ migration_sample_files: "{{ playbook_dir }}/mig-controller/docs/scenarios/{{ mig
 pv: true
 pv_action: move
 quiesce: true
+storage_class: gp2
 oc_binary: "oc"
 with_deploy: true
 with_migrate: true
