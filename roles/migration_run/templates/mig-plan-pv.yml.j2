@@ -27,6 +27,12 @@ spec:
   persistentVolumes:
 {% for item in pv_list %}
   - name: {{ item }}
-    action: {{ pv_action }}
+    selection:
+      action: {{ pv_action }}
+      storageClass: {{ storage_class }}
+    supported:
+      actions:
+      - copy
+      - move
 {% endfor %}
 {% endif %}
