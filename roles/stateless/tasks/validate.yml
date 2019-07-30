@@ -1,0 +1,29 @@
+- name: Wait for nginx deployment
+  k8s_facts:
+    kind: Pod
+    namespace: "{{ namespace }}"
+    label_selectors: "app=nginx"
+  register: pod
+  until: "true in (pod | json_query('resources[].status.containerStatuses[].ready'))"
+  retries: 12
+  delay: 10
+
+- name: Obtain nginx route
+  k8s_facts:
+    kind: Route
+    namespace: nginx-example
+    label_selectors: "app=nginx"
+  register: nginx_route
+
+- debug:
+    msg: "Will check nginx at http://{{ nginx_route.resources[0].spec.host }}"
+
+- name: Verify nginx is available
+  uri:
+    url: "http://{{ nginx_route.resources[0].spec.host }}"
+    method: GET
+    return_content: yes
+  register: uri
+  until: "'nginx' in uri.content"
+  retries: 6
+  delay: 10

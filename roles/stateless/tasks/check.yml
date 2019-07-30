@@ -1,9 +1,0 @@
-- name: Wait for nginx deployment
-  k8s_facts:
-    kind: Pod
-    namespace: "{{ namespace }}"
-    label_selectors: "app=nginx"
-  register: pod
-  until: "true in (pod | json_query('resources[].status.containerStatuses[].ready'))"
-  retries: 10
-  delay: 15
