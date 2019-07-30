@@ -10,6 +10,7 @@
   retries: 60
   delay: 5
   loop:
-    - ['InitialBackupCreated', 'FinalRestoreCreated', 'Completed']
+    - ['InitialBackupCreated', 'EnsureInitialBackupReplicated', 'FinalRestoreCreated', 'Completed']
+    - ['EnsureInitialBackupReplicated', 'FinalRestoreCreated', 'Completed']
     - ['FinalRestoreCreated', 'Completed']
     - ['Completed']
