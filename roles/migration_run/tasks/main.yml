@@ -18,6 +18,10 @@
 - name: Allow velero to reconcile changes before attempting migration
   pause:
     seconds: "{{ mig_velero_timeout }}"
+  when: mig_velero_pause is not defined
+
+- set_fact:
+    mig_velero_pause: true
 
 - name: Execute migration
   k8s:
