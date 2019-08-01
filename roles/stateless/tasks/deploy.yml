@@ -2,6 +2,3 @@
   k8s:
     state : present
     definition: "{{ lookup('file', '{{ migration_sample_files }}/nginx-deployment.yaml' )}}"
-
-- name: Check if deployed 
-  include: check.yml

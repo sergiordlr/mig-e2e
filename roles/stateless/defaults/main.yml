@@ -6,6 +6,7 @@ migration_sample_files: "{{ playbook_dir }}/mig-controller/docs/scenarios/{{ mig
 with_deploy: true
 with_migrate: true
 with_cleanup: true
+with_validate: true
 pv: false
 quiesce: false
 namespace: nginx-example
