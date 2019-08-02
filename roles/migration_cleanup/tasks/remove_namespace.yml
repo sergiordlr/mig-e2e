@@ -1,0 +1,7 @@
+- name: Ensure namespace {{ namespace }} is absent before continuing...
+  k8s:
+    name: "{{ namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: absent
+    wait: yes
