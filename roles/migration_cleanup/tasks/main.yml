@@ -1,7 +1,10 @@
-- name: Ensure namespace {{ namespace }} is absent before continuing...
-  k8s:
-    name: "{{ namespace }}"
-    api_version: v1
-    kind: Namespace
-    state: absent
-    wait: yes
+- name: Remove existing namespace
+  import_tasks: remove_namespace.yml
+
+- name: Remove existing migrations
+  import_tasks: remove_migration.yml
+  when: with_migrate|bool
+
+- name: Remove existing migplans
+  import_tasks: remove_migplan.yml
+  when: with_migrate|bool
