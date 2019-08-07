@@ -4,7 +4,7 @@ metadata:
   labels:
     controller-tools.k8s.io: "1.0"
   name: {{ migration_name }}
-  namespace: mig
+  namespace: {{ migration_namespace }}
 spec:
   stage: false
 {% if quiesce is sameas true and quiesce is defined %}
@@ -12,5 +12,5 @@ spec:
 {% endif %}
   migPlanRef:
     name: {{ migration_plan_name }}
-    namespace: mig
+    namespace: {{ migration_namespace }}
 
