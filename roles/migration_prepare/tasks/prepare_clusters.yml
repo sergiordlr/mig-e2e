@@ -6,7 +6,7 @@
 - name: Create source cluster migration definition
   k8s:
     state: present
-    definition: "{{ lookup('file', 'mig-cluster-local.yml')}}"
+    definition: "{{ lookup('template', 'mig-cluster-local.yml.j2')}}"
 
 - name: Create remote cluster definition
   k8s:
@@ -21,7 +21,7 @@
 - name: Create remote cluster migration defition
   k8s:
     state: present
-    definition: "{{ lookup('file', 'mig-cluster-remote.yml') }}"
+    definition: "{{ lookup('template', 'mig-cluster-remote.yml.j2') }}"
 
 - name: Create migration storage creds
   k8s:

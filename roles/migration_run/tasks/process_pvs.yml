@@ -3,7 +3,7 @@
   k8s_facts:
     kind: MigPlan
     api_version: v1alpha1
-    namespace: mig
+    namespace: "{{ migration_namespace }}"
     name: "{{ migration_plan_name }}"
   register: mig_plan
   until: mig_plan.resources[0].get("spec", {}).get("persistentVolumes", {})

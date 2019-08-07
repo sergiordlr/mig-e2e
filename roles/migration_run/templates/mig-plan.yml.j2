@@ -4,20 +4,20 @@ metadata:
   labels:
     controller-tools.k8s.io: "1.0"
   name: {{ migration_plan_name }}
-  namespace: mig
+  namespace: {{ migration_namespace }}
 spec:
 
   srcMigClusterRef:
     name: migcluster-remote
-    namespace: mig
+    namespace: {{ migration_namespace }}
 
   destMigClusterRef:
     name: migcluster-local
-    namespace: mig
+    namespace: {{ migration_namespace }}
 
   migStorageRef:
     name: migstorage-sample
-    namespace: mig
+    namespace: {{ migration_namespace }}
 
   # [!] Change namespaces to adjust which OpenShift namespaces should be migrated from source to destination cluster
   namespaces: 

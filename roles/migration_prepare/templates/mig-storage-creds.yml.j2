@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  namespace: mig
+  namespace: {{ migration_namespace }}
   name: migstorage-creds
 type: Opaque
 data:
