@@ -1,0 +1,15 @@
+---
+migration_sample_name: sock-shop
+migration_plan_name: "{{ migration_sample_name }}-migplan-{{ ansible_date_time.epoch }}"
+migration_name: "{{ migration_sample_name}}-mig-{{ ansible_date_time.epoch }}"
+migration_sample_files: "{{ playbook_dir }}/mig-demo-apps/apps/{{ migration_sample_name }}"
+pv: true
+pv_action: move
+quiesce: true
+storage_class: gp2
+oc_binary: "oc"
+with_deploy: true
+with_migrate: true
+with_cleanup: true
+with_validate: true
+namespace: sock-shop

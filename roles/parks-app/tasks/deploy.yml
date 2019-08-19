@@ -1,0 +1,15 @@
+- name: Deploy {{ migration_sample_name }} sample
+  k8s:
+    state : present
+    definition: "{{ lookup('file', '{{ migration_sample_files }}/manifest.yaml' )}}"
+
+- name: Check s2i build {{ migration_sample_name }} restify is completed
+  k8s_facts:
+    kind: Build
+    api_version: v1
+    namespace: "{{ namespace }}"
+    label_selectors: "app=restify"
+  register: s2i
+  until: s2i.resources[0].get("status", {}).get("phase", "") == "Complete"
+  retries: 60
+  delay: 5
