@@ -35,20 +35,20 @@ See below for a decription of these paremeters :
 On the **source** cluster, deploy **all** sample tests
 
 ```bash
-$ ansible-playbook mig_controller_samples.yml -e "with_migrate=false"
+$ ansible-playbook e2e_mig_samples.yml -e "with_migrate=false"
 ```
 
 On the **destination** cluster (mig-controller host) , migrate **all** sample tests
 
 ```bash
-$ ansible-playbook mig_controller_samples.yml -e "with_deploy=false"
+$ ansible-playbook e2e_mig_samples.yml -e "with_deploy=false"
 ```
 
 Alternatively you can deploy (or migrate) a single or multiple sample tests by using tags
 
 ```bash
-ansible-playbook mig_controller_samples.yml --tags=stateless -e "with_migrate=false"
-ansible-playbook mig_controller_samples.yml --tags=stateless,local-images -e "with_deploy=false"
+ansible-playbook e2e_mig_samples.yml --tags=sock-shop -e "with_migrate=false"
+ansible-playbook e2e_mig_samples.yml --tags=sock-shop,parks-app -e "with_deploy=false"
 ```
 
 The migrations will be tracked to completion, you can also check the status of each _phase of the migration_ using : 

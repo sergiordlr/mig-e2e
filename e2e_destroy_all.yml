@@ -1,0 +1,15 @@
+- hosts: localhost
+  tasks:
+    - name: Destroy all e2e tests
+      k8s:
+        state: absent
+        api_version: v1
+        kind: Namespace
+        name: "{{ item }}"
+      with_items:
+        - nginx-example
+        - registry-example
+        - mysql-persistent
+        - sock-shop
+        - robot-shop
+        - parks-app
