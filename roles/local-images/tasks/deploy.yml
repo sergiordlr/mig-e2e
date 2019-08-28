@@ -1,9 +1,7 @@
-- name: Create namespace for local-images
-  k8s:
-    name: "{{ namespace }}"
-    api_version: v1
-    kind: Namespace
-    state: present
+# Fix for OCP3.7-9
+# See : https://github.com/fusor/mig-demo-apps/issues/7
+- name: Create namespace for {{ migration_sample_name }}
+  shell: "{{ oc_binary }} new-project {{ namespace }} --skip-config-write=true"
 
 - name: Build sample new-app using s2i
   shell: "{{ oc_binary }} -n {{ namespace }} new-app {{ s2i_app_location }}"

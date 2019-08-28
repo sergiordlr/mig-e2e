@@ -5,3 +5,4 @@
     kind: Namespace
     state: absent
     wait: yes
+    wait_timeout: 300
