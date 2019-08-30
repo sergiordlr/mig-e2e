@@ -5,6 +5,7 @@ migration_name: "{{ migration_sample_name}}-mig-{{ ansible_date_time.epoch }}"
 migration_sample_files: "{{ playbook_dir }}/mig-controller/docs/scenarios/{{ migration_sample_name }}"
 pv: true
 pv_action: move
+pv_copy_method: filesystem
 quiesce: true
 storage_class: gp2
 oc_binary: "oc"
