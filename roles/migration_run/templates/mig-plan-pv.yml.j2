@@ -30,6 +30,9 @@ spec:
     selection:
       action: {{ pv_action }}
       storageClass: {{ storage_class }}
+{% if pv_action == 'copy' %}
+      copyMethod: {{ pv_copy_method }}
+{% endif %}
     supported:
       actions:
       - copy
