@@ -7,6 +7,7 @@ pv: true
 pv_action: move
 pv_copy_method: filesystem
 quiesce: true
+stage: false
 storage_class: gp2
 oc_binary: "oc"
 with_deploy: true
