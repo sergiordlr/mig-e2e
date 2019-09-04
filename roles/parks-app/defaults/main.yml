@@ -6,7 +6,8 @@ migration_sample_files: "{{ playbook_dir }}/mig-demo-apps/apps/{{ migration_samp
 pv: true
 pv_action: move
 pv_copy_method: filesystem
-quiesce: true
+quiesce: false
+stage: false
 storage_class: gp2
 oc_binary: "oc"
 with_deploy: true

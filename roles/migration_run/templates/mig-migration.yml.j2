@@ -6,9 +6,11 @@ metadata:
   name: {{ migration_name }}
   namespace: {{ migration_namespace }}
 spec:
-  stage: false
-{% if quiesce is sameas true and quiesce is defined %}
-  quiescePods: true
+{% if stage is defined %}
+  stage: {{ stage }}
+{% endif %}
+{% if quiesce is defined %}
+  quiescePods: {{ quiesce }}
 {% endif %}
   migPlanRef:
     name: {{ migration_plan_name }}
