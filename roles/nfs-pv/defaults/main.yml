@@ -13,4 +13,5 @@ oc_binary: "oc"
 with_deploy: true
 with_migrate: true
 with_cleanup: true
+with_validate: true
 namespace: mysql-persistent

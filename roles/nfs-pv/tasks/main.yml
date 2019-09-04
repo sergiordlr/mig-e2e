@@ -15,3 +15,7 @@
 - name: Track migration
   import_tasks: track.yml
   when: with_migrate|bool
+
+- name: Validate migration
+  import_tasks: validate.yml
+  when: with_validate|bool
