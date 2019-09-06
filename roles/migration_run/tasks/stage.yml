@@ -1,0 +1,18 @@
+---
+
+- set_fact:
+    migration_name: "{{ migration_name + '-stage-phase' }}"
+
+- name: Execute stage migration
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'mig-migration-stage.yml.j2') }}"
+
+- debug:
+    msg: "Created stage migration name : {{ migration_name }}"
+
+- include_role:
+    name: migration_track
+
+- set_fact:
+    migration_name: "{{ migration_name.split('-stage-phase')[0] }}"
