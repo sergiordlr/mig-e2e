@@ -1,6 +1,7 @@
 - hosts: localhost
   roles:
     - { role: migration_prepare, tags: ["always"] }
+    - { role: mssql-app, tags: ["mssql-app"], pv_action: 'copy', stage: 'true' }
     - { role: sock-shop, tags: ["sock-shop"] }
     - { role: robot-shop, tags: ["robot-shop"] }
     - { role: parks-app, tags: ["parks-app"], pv_action: 'copy' }

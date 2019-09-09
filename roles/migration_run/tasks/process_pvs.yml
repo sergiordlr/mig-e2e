@@ -24,6 +24,14 @@
     msg:
     - "PVs discovered: {{ pv_list | join(' ') }}"
     - "PV action: {{ pv_action }}"
+  when: pv_action == "move"
+
+- debug:
+    msg:
+    - "PVs discovered: {{ pv_list | join(' ') }}"
+    - "PV action: {{ pv_action }}"
+    - "PV copy method: {{ pv_copy_method }}"
+  when: pv_action == "copy"
 
 - name: Update migration plan with PVs
   k8s:
