@@ -8,6 +8,7 @@
     - { role: robot-shop, tags: ["robot-shop"] }
     - { role: parks-app, tags: ["parks-app"] }
     - { role: mssql-app, tags: ["mssql-app"] }
+    - { role: mediawiki, tags: ["mediawiki"] }
   vars_files:
     - "{{ playbook_dir }}/config/mig_controller.yml"
     - "{{ playbook_dir }}/config/defaults.yml"

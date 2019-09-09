@@ -5,6 +5,7 @@
     - { role: sock-shop, tags: ["sock-shop"] }
     - { role: robot-shop, tags: ["robot-shop"] }
     - { role: parks-app, tags: ["parks-app"], pv_action: 'copy' }
+    - { role: mediawiki, tags: ["mediawiki"] }
   vars_files:
     - "{{ playbook_dir }}/config/mig_controller.yml"
     - "{{ playbook_dir }}/config/defaults.yml"
