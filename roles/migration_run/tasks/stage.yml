@@ -1,7 +1,7 @@
 ---
 
 - set_fact:
-    migration_name: "{{ migration_name + '-stage-phase' }}"
+    migration_name_stage: "{{ migration_name + '-stage-phase' }}"
 
 - name: Execute stage migration
   k8s:
@@ -9,10 +9,8 @@
     definition: "{{ lookup('template', 'mig-migration-stage.yml.j2') }}"
 
 - debug:
-    msg: "Created stage migration name : {{ migration_name }}"
+    msg: "Created stage migration name : {{ migration_name_stage }}"
 
 - include_role:
     name: migration_track
-
-- set_fact:
-    migration_name: "{{ migration_name.split('-stage-phase')[0] }}"
+    tasks_from: track_stage.yml
