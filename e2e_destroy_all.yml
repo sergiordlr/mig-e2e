@@ -8,7 +8,6 @@
         name: "{{ item }}"
       with_items:
         - nginx-example
-        - registry-example
         - mysql-persistent
         - sock-shop
         - robot-shop
