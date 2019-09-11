@@ -1,0 +1,4 @@
+- name: Create {{ migration_sample_name }} SCC
+  k8s:
+    state : present
+    definition: "{{ lookup('file', 'mssql-scc.yml' )}}"

@@ -8,6 +8,10 @@
   import_tasks: deploy.yml
   when: with_deploy|bool
 
+- name: Create mssql SCC
+  import_tasks: create_scc.yml
+  when: with_migrate|bool
+
 - name: Start migration
   import_tasks: migrate.yml
   when: with_migrate|bool
