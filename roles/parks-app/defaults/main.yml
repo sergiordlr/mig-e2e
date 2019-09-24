@@ -8,8 +8,8 @@ pv_action: move
 pv_copy_method: filesystem
 quiesce: false
 stage: false
-storage_class: gp2
-oc_binary: "oc"
+src_storage_class: ""
+dst_storage_class: gp2
 with_deploy: true
 with_migrate: true
 with_cleanup: true

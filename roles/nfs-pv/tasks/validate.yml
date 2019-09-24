@@ -5,5 +5,5 @@
     label_selectors: "app=mysql"
   register: pod
   until: "true in (pod | json_query('resources[].status.containerStatuses[].ready'))"
-  retries: 10
-  delay: 15
+  retries: 30
+  delay: 10

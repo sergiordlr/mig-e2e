@@ -4,7 +4,7 @@
     - { role: mssql-app, tags: ["mssql-app"], pv_action: 'copy', stage: 'true' }
     - { role: sock-shop, tags: ["sock-shop"] }
     - { role: robot-shop, tags: ["robot-shop"] }
-    - { role: parks-app, tags: ["parks-app"], pv_action: 'copy' }
+    - { role: parks-app, tags: ["parks-app"], pv_action: 'copy', src_storage_class: 'glusterfs-storage' }
     - { role: mediawiki, tags: ["mediawiki"] }
   vars_files:
     - "{{ playbook_dir }}/config/mig_controller.yml"

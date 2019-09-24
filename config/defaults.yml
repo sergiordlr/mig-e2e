@@ -1,3 +1,4 @@
 # default common variables for mig-e2e roles/plays
 
 migration_namespace: openshift-migration
+oc_binary: "oc"
