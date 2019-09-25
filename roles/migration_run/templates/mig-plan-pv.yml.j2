@@ -29,7 +29,7 @@ spec:
   - name: {{ item }}
     selection:
       action: {{ pv_action }}
-      storageClass: {{ storage_class }}
+      storageClass: {{ dst_storage_class }}
 {% if pv_action == 'copy' %}
       copyMethod: {{ pv_copy_method }}
 {% endif %}

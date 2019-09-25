@@ -13,6 +13,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
+  storageClassName: {{ src_storage_class | quote }}
   resources:
     requests:
       storage: 10Gi

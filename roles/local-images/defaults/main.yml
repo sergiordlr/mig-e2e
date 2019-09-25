@@ -4,7 +4,6 @@ migration_plan_name: "{{ migration_sample_name }}-migplan-{{ ansible_date_time.e
 migration_name: "{{ migration_sample_name }}-mig-{{ ansible_date_time.epoch }}"
 migration_sample_files: "{{ playbook_dir }}/mig-controller/docs/scenarios/{{ migration_sample_name }}"
 s2i_app_location: "https://github.com/openshift/nodejs-ex"
-oc_binary: "oc"
 with_deploy: true
 with_migrate: true
 with_cleanup: true

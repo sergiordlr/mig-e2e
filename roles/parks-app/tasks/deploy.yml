@@ -6,7 +6,7 @@
 - name: Deploy {{ migration_sample_name }} sample
   k8s:
     state : present
-    definition: "{{ lookup('file', '{{ migration_sample_files }}/manifest.yaml' )}}"
+    definition: "{{ lookup('template', 'manifest.yml' )}}"
 
 - name: Check s2i build {{ migration_sample_name }} restify is completed
   k8s_facts:
