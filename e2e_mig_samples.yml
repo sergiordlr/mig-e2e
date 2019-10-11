@@ -1,11 +1,11 @@
 - hosts: localhost
   roles:
     - { role: migration_prepare, tags: ["always"] }
-    - { role: mssql-app, tags: ["mssql-app"], pv_action: 'copy', stage: 'true' }
+    - { role: mssql-app, tags: ["mssql-app"], pv_action: 'copy', stage: 'true', dst_storage_class: 'csi-cephfs' }
     - { role: sock-shop, tags: ["sock-shop"] }
     - { role: robot-shop, tags: ["robot-shop"] }
     - { role: parks-app, tags: ["parks-app"], pv_action: 'copy', src_storage_class: 'glusterfs-storage' }
-    - { role: mediawiki, tags: ["mediawiki"] }
+    - { role: mediawiki, tags: ["mediawiki"], pv_action: 'copy', src_storage_class: 'glusterfs-storage', dst_storage_class: 'csi-cephfs' }
   vars_files:
     - "{{ playbook_dir }}/config/mig_controller.yml"
     - "{{ playbook_dir }}/config/defaults.yml"
