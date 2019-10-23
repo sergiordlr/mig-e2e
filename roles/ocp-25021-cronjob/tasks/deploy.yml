@@ -1,0 +1,34 @@
+- name: Check namespace
+  k8s_facts:
+    kind: Namespace
+    name: "{{ namespace }}"
+  register: ns
+
+- name: Create namespace
+  shell: "{{ oc_binary }} new-project {{ namespace }} --skip-config-write=true"
+  when: ns.resources | length == 0
+
+- name: Import image to imagestream
+  shell: "{{ oc_binary }} -n {{ namespace }}  import-image {{ internal_image_name }}:{{ internal_image_tag }} --from {{ external_image_name }} --confirm"
+
+# Cron job will probably fail in 3.7 because of the api version. TODO: Adapt this to 3.7 too.
+- name: Deploy cronjob using external image
+  k8s:
+    state : present
+    namespace : "{{ namespace }}"
+    definition: "{{ lookup('template', 'deployment.yml.j2' )}}"
+  vars:
+    app_name: "{{ ext_app_name }}"
+    docker_image: docker.io/alpine
+
+
+- name: Deploy cronjob using internal image
+  k8s:
+    state : present
+    namespace : "{{ namespace }}"
+    definition: "{{ lookup('template', 'deployment.yml.j2' )}}"
+  vars:
+    app_name: "{{ int_app_name }}"
+    docker_image: "docker-registry.default.svc:5000/{{ namespace }}/{{ internal_image_name }}:{{ internal_image_tag }}"
+
+

@@ -8,6 +8,11 @@
     - { role: parks-app, tags: ["parks-app"] }
     - { role: mssql-app, tags: ["mssql-app"] }
     - { role: mediawiki, tags: ["mediawiki"] }
+    - { role: ocp-25000-sets, tags: ["ocp-25000-sets", "ocp"] }
+    - { role: ocp-25021-cronjob, tags: ["never", "ocp-25021-cronjob"] }
+    - { role: ocp-25090-jobs, tags: ["ocp-25090-jobs", "ocp"] }
+    - { role: ocp-25212-initcont, tags: ["ocp-25212-initcont", "ocp"] }
+    - { role: ocp-24997-confmap, tags: ["ocp-24997-confmap", "ocp"] }
   vars_files:
     - "{{ playbook_dir }}/config/mig_controller.yml"
     - "{{ playbook_dir }}/config/defaults.yml"
