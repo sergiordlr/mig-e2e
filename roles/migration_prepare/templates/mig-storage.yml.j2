@@ -3,7 +3,7 @@ kind: MigStorage
 metadata:
   labels:
     controller-tools.k8s.io: "1.0"
-  name: migstorage-sample
+  name: {{ migstorage_name }}
   namespace: {{ migration_namespace }}
 spec:
   backupStorageProvider: aws
@@ -16,7 +16,7 @@ spec:
     awsRegion: {{ mig_controller_aws_bucket_region }}
     credsSecretRef:
       namespace: {{ migration_namespace }}
-      name: migstorage-creds
+      name: {{ migstorage_name }}-creds
 
     # Optional backupStorageConfig parameters
     #awsKmsKeyId: foo
@@ -28,5 +28,5 @@ spec:
     awsRegion: {{ mig_controller_aws_bucket_region }}
     credsSecretRef:
       namespace: {{ migration_namespace }}
-      name: migstorage-creds
+      name: {{ migstorage_name }}-creds
 

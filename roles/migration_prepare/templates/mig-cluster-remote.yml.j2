@@ -3,7 +3,7 @@ kind: MigCluster
 metadata:
   labels:
     controller-tools.k8s.io: "1.0"
-  name: migcluster-remote
+  name: {{ migcluster_source_name }}
   namespace: {{ migration_namespace }}
 spec:
   # [!] Change isHostCluster to 'true' if you'll be running the controller on this cluster.
@@ -11,7 +11,7 @@ spec:
   isHostCluster: false
 
   serviceAccountSecretRef:
-    name: sa-token-remote
+    name: sa-token-{{ migcluster_source_name }}
     namespace: {{ migration_namespace }}
 
   url: {{ mig_controller_remote_cluster_url }}

@@ -7,3 +7,4 @@
 - name: Prepare clusters for migration
   import_tasks: prepare_clusters.yml
   when: with_migrate|bool
+  tags: ["always", "prepare_cluster"]

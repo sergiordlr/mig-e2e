@@ -8,15 +8,15 @@ metadata:
 spec:
 
   srcMigClusterRef:
-    name: migcluster-remote
+    name: {{ migcluster_source_name }}
     namespace: {{ migration_namespace }}
 
   destMigClusterRef:
-    name: migcluster-local
+    name: {{ migcluster_target_name }}
     namespace: {{ migration_namespace }}
 
   migStorageRef:
-    name: migstorage-sample
+    name: {{ migstorage_name }}
     namespace: {{ migration_namespace }}
 
   # [!] Change namespaces to adjust which OpenShift namespaces should be migrated from source to destination cluster
