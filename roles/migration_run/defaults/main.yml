@@ -1,2 +1,2 @@
 ---
-mig_velero_timeout: 120
+mig_velero_timeout: 10

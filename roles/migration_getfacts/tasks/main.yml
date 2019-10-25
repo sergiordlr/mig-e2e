@@ -1,0 +1,35 @@
+- name: Get cluster version
+  block:
+  - name: Check cluster version for 4.x
+    k8s_facts:
+      kind: ClusterVersion
+    register: cv
+  
+  - name: set 4.x version
+    set_fact:
+       oc_version: "{{ cv.resources[0].status.desired.version | regex_search('^[0-9]\\.[0-9]+')}}"
+    when: cv.resources | length > 0
+
+  - debug: msg={{ oc_version }}
+    when: cv.resources | length > 0
+
+  - fail:
+      msg: "Ocp is not a 4.x cluster"
+    when: cv.resources | length == 0
+
+  rescue:
+  - name: Cluster is not 4.x. Checking for 3.x version.
+    shell: "{{ oc_binary }} version"
+    register: cmdver
+  - name: Set  version for 3.x
+    set_fact:
+      oc_version: "{{ cmdver.stdout | regex_search('openshift v[0-9]\\.[0-9]+') | replace('openshift v', '')  }}"
+
+  - debug: msg={{ oc_version }}
+
+
+- name: Set apis
+  set_fact:
+    cronjob_api: "{{ apis.cronjob.get(oc_version, apis.cronjob.get('default')) }}"
+
+- debug: msg={{ cronjob_api }}

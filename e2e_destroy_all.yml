@@ -14,3 +14,8 @@
         - parks-app
         - mssql-example
         - mediawiki
+        - ocp-25000-sets
+        - ocp-25021-cronjob
+        - ocp-25090-jobs
+        - ocp-25212-initcont
+        - ocp-24997-confmap

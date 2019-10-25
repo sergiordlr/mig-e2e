@@ -1,0 +1,4 @@
+apis:
+  cronjob:
+    default: "batch/v1beta1"
+    "3.7": "batch/v2alpha1"

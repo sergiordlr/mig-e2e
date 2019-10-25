@@ -1,0 +1,23 @@
+namespace: ocp-25000-sets
+
+daemonset:
+  app_name: hello-daemonset
+
+replicaset:
+  app_name: frontend
+  replicas: 3
+
+statefulset:
+  app_name: hello
+  replicas: 1
+
+migration_sample_name: ocp-25000-sets
+migration_plan_name: "{{ migration_sample_name }}-migplan-{{ ansible_date_time.epoch }}"
+migration_name: "{{ migration_sample_name }}-mig-{{ ansible_date_time.epoch }}"
+#migration_sample_files: "{{ playbook_dir }}/mig-controller/docs/scenarios/{{ migration_sample_name }}"
+with_deploy: true
+with_migrate: true
+with_cleanup: true
+with_validate: true
+pv: false
+quiesce: true
