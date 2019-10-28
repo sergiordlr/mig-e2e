@@ -1,8 +1,9 @@
 - name: Ensure namespace {{ namespace }} is absent before continuing...
   k8s:
-    name: "{{ namespace }}"
+    name: "{{ item }}"
     api_version: v1
     kind: Namespace
     state: absent
     wait: yes
     wait_timeout: 300
+  loop: "{{ [namespace] if namespace is string else namespace }}"

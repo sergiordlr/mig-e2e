@@ -20,8 +20,11 @@ spec:
     namespace: {{ migration_namespace }}
 
   # [!] Change namespaces to adjust which OpenShift namespaces should be migrated from source to destination cluster
-  namespaces: 
-  - {{ namespace }}
+{% if namespace is string %}
+  namespaces: [ {{ namespace }} ]
+{% else %}
+  namespaces: {{ namespace | to_yaml }}
+{% endif %}
 
 {% if pv is sameas true and pv_list is defined %}
   persistentVolumes:
