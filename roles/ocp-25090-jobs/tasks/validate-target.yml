@@ -5,7 +5,7 @@
     name: "{{ internal_image_name }}"
   register: imagestream
   until: (imagestream.resources | length == 1) and (imagestream.resources[0].status.dockerImageRepository is search(internal_image_name | string))
-  retries: 10
+  retries: 30
 
 - name: Check external image job status. Must be active.
   k8s_facts:
