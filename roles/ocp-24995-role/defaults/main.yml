@@ -1,0 +1,8 @@
+namespace: ocp-24995-role
+rolebinding_name: basic-role-binding
+rolename: basic-role
+
+with_deploy: true
+with_migrate: true
+with_cleanup: true
+with_validate: true
