@@ -1,0 +1,53 @@
+- name: Check namespace
+  k8s_facts:
+    kind: Namespace
+    name: "{{ namespace }}"
+  register: ns
+
+- name: Create namespace
+  shell: "{{ oc_binary }} new-project {{ namespace }} --skip-config-write=true"
+  when: ns.resources | length == 0
+
+- name: Deploy nginx nodes
+  k8s:
+    state : present
+    definition: "{{ lookup('template', 'deployment.yml.j2' )}}"
+  vars:
+    storage_class: "{{ src_storage_class if src_storage_class is defined else 'default' }}"
+
+- name: Check nodes status
+  k8s_facts:
+    kind: Pod
+    namespace: "{{ namespace }}"
+    label_selectors: "app={{ app_name }}"
+    field_selectors: 
+    - status.phase=Running
+  register: pod
+  until: "true in (pod | json_query('resources[].status.containerStatuses[].ready'))"
+  retries: 30
+
+
+- name: Obtain route
+  k8s_facts:
+    kind: Route
+    namespace: "{{ namespace }}"
+    label_selectors: "app={{ app_name }}"
+  register: nginx_route
+  until: nginx_route.resources | length > 0
+  retries: 30
+
+- name: Force an error to log in the error.log file
+  uri:
+    url: http://{{ nginx_route.resources[0].spec.host }}
+    method: GET
+    status_code: 403
+
+- name: Upload an index html file
+  shell: "{{ oc_binary }} -n {{ namespace }} rsh $( {{oc_binary}} get pods -n {{ namespace }} -o jsonpath='{.items[0].metadata.name}') sh -c 'echo \"<h1>HELLO WORLD</h1>\" > /usr/share/nginx/html/index.html'"
+
+- name: Acces the html file
+  uri:
+    url: http://{{ nginx_route.resources[0].spec.host }}
+    method: GET
+    status_code: 200
+
