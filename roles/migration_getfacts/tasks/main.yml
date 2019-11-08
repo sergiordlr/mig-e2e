@@ -17,6 +17,10 @@
       msg: "Ocp is not a 4.x cluster"
     when: cv.resources | length == 0
 
+  - name: Set 4.x default registry
+    set_fact:
+      default_registry: "image-registry.openshift-image-registry.svc:5000"
+
   rescue:
   - name: Cluster is not 4.x. Checking for 3.x version.
     shell: "{{ oc_binary }} version"
@@ -24,6 +28,10 @@
   - name: Set  version for 3.x
     set_fact:
       oc_version: "{{ cmdver.stdout | regex_search('openshift v[0-9]\\.[0-9]+') | replace('openshift v', '')  }}"
+
+  - name: Set 3.x default registry
+    set_fact:
+      default_registry: "docker-registry.default.svc:5000"
 
   - debug: msg={{ oc_version }}
 

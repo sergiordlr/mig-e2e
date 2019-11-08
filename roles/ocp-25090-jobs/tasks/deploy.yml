@@ -30,7 +30,7 @@
   vars:
     app_name: "{{ int_app_name }}"
     sleep_time: 1d
-    docker_image: "docker-registry.default.svc:5000/{{ namespace }}/{{ internal_image_name }}:{{ internal_image_tag }}"
+    docker_image: "{{ default_registry }}/{{ namespace }}/{{ internal_image_name }}:{{ internal_image_tag }}"
 
 
 - name: Deploy fast job using external image. This fob will end and should not be migrated

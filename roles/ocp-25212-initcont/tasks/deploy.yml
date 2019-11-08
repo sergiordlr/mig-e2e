@@ -30,5 +30,5 @@
   vars:
     replicas: 1
     app_name: "{{ int_app_name }}"
-    init_image: "docker-registry.default.svc:5000/{{ namespace }}/{{ internal_image_name }}:{{ internal_image_tag }}"
+    init_image: "{{ default_registry }}/{{ namespace }}/{{ internal_image_name }}:{{ internal_image_tag }}"
 

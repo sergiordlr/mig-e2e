@@ -29,6 +29,6 @@
     definition: "{{ lookup('template', 'deployment.yml.j2' )}}"
   vars:
     app_name: "{{ int_app_name }}"
-    docker_image: "docker-registry.default.svc:5000/{{ namespace }}/{{ internal_image_name }}:{{ internal_image_tag }}"
+    docker_image: "{{ default_registry }}/{{ namespace }}/{{ internal_image_name }}:{{ internal_image_tag }}"
 
 
