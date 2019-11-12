@@ -8,7 +8,7 @@
   shell: "{{ oc_binary }} new-project {{ namespace }} --skip-config-write=true"
   when: ns.resources | length == 0
 
-- name: Deploy pods using external image
+- name: "Deploy {{ default_replicas }} pods"
   k8s:
     state : present
     namespace : "{{ namespace }}"

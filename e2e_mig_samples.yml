@@ -11,7 +11,7 @@
     - { role: ocp-25090-jobs, tags: ["ocp-25090-jobs", "ocp"] }
     - { role: ocp-25212-initcont, tags: ["ocp-25212-initcont", "ocp"] }
     - { role: ocp-24997-confmap, tags: ["ocp-24997-confmap", "ocp"] }
-    - { role: ocp-maxpods, tags: ["ocp-maxpods", "ocp"] }
+    - { role: ocp-25986-maxpods, tags: ["ocp-25986-maxpods", "ocp"] }
     - { role: nginx-pv, tags: ["nginx-pv", "ocp"] }
     - { role: ocp-24659-mysql, tags: ["ocp-24659-mysql", "ocp"] }
     - { role: ocp-24686-project, tags: ["ocp-24686-project", "ocp"] }
