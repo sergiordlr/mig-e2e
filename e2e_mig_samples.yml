@@ -7,10 +7,14 @@
     - { role: parks-app, tags: ["parks-app"], pv_action: 'copy', src_storage_class: 'glusterfs-storage' }
     - { role: mediawiki, tags: ["mediawiki"], pv_action: 'copy', src_storage_class: 'glusterfs-storage', dst_storage_class: 'csi-cephfs' }
     - { role: ocp-25000-sets, tags: ["ocp-25000-sets", "ocp"] }
-    - { role: ocp-25021-cronjob, tags: ["never", "ocp-25021-cronjob"] }
+    - { role: ocp-25021-cronjob, tags: ["never", "ocp-25021-cronjob", "ocp"] }
     - { role: ocp-25090-jobs, tags: ["ocp-25090-jobs", "ocp"] }
     - { role: ocp-25212-initcont, tags: ["ocp-25212-initcont", "ocp"] }
     - { role: ocp-24997-confmap, tags: ["ocp-24997-confmap", "ocp"] }
+    - { role: ocp-maxpods, tags: ["ocp-maxpods", "ocp"] }
+    - { role: nginx-pv, tags: ["nginx-pv", "ocp"] }
+    - { role: ocp-24659-mysql, tags: ["ocp-24659-mysql", "ocp"] }
+    - { role: ocp-24686-project, tags: ["ocp-24686-project", "ocp"] }
   vars_files:
     - "{{ playbook_dir }}/config/mig_controller.yml"
     - "{{ playbook_dir }}/config/defaults.yml"
