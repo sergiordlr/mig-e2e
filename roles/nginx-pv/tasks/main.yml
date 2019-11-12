@@ -16,7 +16,7 @@
   when: with_migrate|bool
 
 - name: Validate default storageclasses
-  import_tasks: validate-defaults.yml
+  import_tasks: common_tasks/validate-defaults.yml
   when: (with_validate|bool) and (with_migrate|bool) and not (pv|bool)
 
 - name: Track migration

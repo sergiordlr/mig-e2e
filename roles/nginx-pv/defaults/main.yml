@@ -15,8 +15,10 @@ with_cleanup: true
 with_validate: true
 pv: false
 quiesce: false
+src_storage_class: default
 pv_action: copy
 pv_copy_method: filesystem
 html_accessmode: ReadWriteOnce
 logs_accessmode: ReadWriteOnce
 no_warnings_allowed: true
+
