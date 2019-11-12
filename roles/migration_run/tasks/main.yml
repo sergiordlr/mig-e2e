@@ -27,6 +27,21 @@
 - set_fact:
     mig_velero_pause: true
 
+- name: Get plan information when ready
+  k8s_info:
+    kind: MigPlan
+    api_version: v1alpha1
+    namespace: "{{ migration_namespace }}"
+    name: "{{ migration_plan_name }}"
+  register: mig_plan
+  until: mig_plan.resources|length > 0 and (mig_plan.resources[0].get( 'status', {}).get("conditions", {}) | selectattr( 'type', 'equalto', 'Ready') | selectattr( 'status', 'equalto', 'True') | list | length > 0)
+  retries: 10
+  delay: 5
+
+- name: Store migplan fact
+  set_fact:
+    fact_migrated_plan: "{{ mig_plan.resources | first }}"
+
 - name: Process staged migration phase
   import_tasks: stage.yml
   when: stage|default(false)|bool == true
