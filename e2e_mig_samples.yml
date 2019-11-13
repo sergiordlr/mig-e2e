@@ -15,6 +15,7 @@
     - { role: nginx-pv, tags: ["nginx-pv", "ocp"] }
     - { role: ocp-24659-mysql, tags: ["ocp-24659-mysql", "ocp"] }
     - { role: ocp-24686-project, tags: ["ocp-24686-project", "ocp"] }
+    - { role: ocp-24769-cakephp, tags: ["ocp-24769-cakephp", "ocp"] }
   vars_files:
     - "{{ playbook_dir }}/config/mig_controller.yml"
     - "{{ playbook_dir }}/config/defaults.yml"
