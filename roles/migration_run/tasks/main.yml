@@ -38,7 +38,7 @@
   retries: 10
   delay: 5
 
-- name: Store migplan fact
+- name: Expose migplan fact
   set_fact:
     fact_migrated_plan: "{{ mig_plan.resources | first }}"
 
