@@ -1,0 +1,19 @@
+- name: Check Role
+  k8s_facts:
+    api_version: rbac.authorization.k8s.io/v1
+    kind: Role
+    namespace: "{{ namespace }}"
+    name: "{{ rolename }}"
+  register: rolename
+  until: rolename.resources | length > 0
+  retries: 30
+
+- name: Check RoleBinding
+  k8s_facts:
+    api_version: rbac.authorization.k8s.io/v1
+    kind: RoleBinding
+    name: "{{ rolebinding_name }}"
+    namespace: "{{ namespace }}"
+  register: role_binding
+  until: role_binding.resources | length > 0
+  retries: 30

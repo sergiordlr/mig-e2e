@@ -1,0 +1,9 @@
+
+- name: Create namespace for {{ namespace }}
+  shell: "{{ oc_binary }} new-project {{ namespace }} --skip-config-write=true"
+
+- name: Deploy Role and RoleBinding
+  k8s:
+    state : present
+    namespace : "{{ namespace }}"
+    definition: "{{ lookup('template', 'basic-sa-role-template.yml.j2' )}}"

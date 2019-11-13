@@ -11,6 +11,7 @@
     - { role: ocp-25090-jobs, tags: ["ocp-25090-jobs", "ocp"] }
     - { role: ocp-25212-initcont, tags: ["ocp-25212-initcont", "ocp"] }
     - { role: ocp-24997-confmap, tags: ["ocp-24997-confmap", "ocp"] }
+    - { role: ocp-24995-role, tags: ["ocp-24995-roles", "ocp"] }
   vars_files:
     - "{{ playbook_dir }}/config/mig_controller.yml"
     - "{{ playbook_dir }}/config/defaults.yml"
