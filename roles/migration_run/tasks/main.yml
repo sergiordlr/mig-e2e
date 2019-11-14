@@ -24,7 +24,7 @@
     mig_velero_pause: true
 
 - name: Get plan information when ready
-  k8s_info:
+  k8s_facts:
     kind: MigPlan
     api_version: v1alpha1
     namespace: "{{ migration_namespace }}"
