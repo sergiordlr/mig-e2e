@@ -19,7 +19,7 @@
   when: item.provisioner == 'cephfs.csi.ceph.com'
   loop: "{{ storage_classes.resources }}"
 
-- name: Get ceph rbd fs class name
+- name: Get ceph rbd class name
   set_fact:
     csi_rbd: "{{ item.metadata.name }}"
     csi_rbd_installed: True
@@ -49,7 +49,8 @@
 
 - fail:
     msg: "Wrong default storage class for {{ item.pvc.name }} in migplan {{ migration_plan_name }}"
-  when:  ceph_installed
+  # If pv:true, it means that the class was forced, and not selected by default
+  when:  ceph_installed and not (pv|bool)
   loop: "{{ storage_classes_fail }}"
 
 
