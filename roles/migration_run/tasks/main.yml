@@ -1,7 +1,3 @@
-- fail:
-    msg: "Proccess persistent volumes (pv: true) can only handle one namespace. Current namespaces {{ namespace }}"
-  when: (pv|default(false)|bool == true) and (not namespace is string and namespace | length > 1)
-
 - name: Include required vars
   include_vars:
     file: "{{ playbook_dir }}/config/mig_controller.yml"
@@ -28,7 +24,7 @@
     mig_velero_pause: true
 
 - name: Get plan information when ready
-  k8s_info:
+  k8s_facts:
     kind: MigPlan
     api_version: v1alpha1
     namespace: "{{ migration_namespace }}"
