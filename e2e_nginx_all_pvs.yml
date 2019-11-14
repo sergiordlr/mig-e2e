@@ -1,60 +1,133 @@
 - hosts: localhost
   vars:
     platform_sc: gp2
-  roles:
-    - role: nginx-pv
-      namespace: "ng-cloud2cloud"
-      src_storage_class: "{{ platform_sc }}"
-      dst_storage_class: "{{ platform_sc }}"
-      pv: true
-    - role: nginx-pv
-      namespace: "ng-cloud2rbd"
-      src_storage_class: "{{ platform_sc }}"
-      dst_storage_class: "csi-rbd"
-      pv: true
-    - role: nginx-pv
-      namespace: "ng-cloud2cfs"
-      src_storage_class: "{{ platform_sc }}"
-      dst_storage_class: "csi-cephfs"
-      pv: true
-    - role: nginx-pv
-      namespace: "ng-cloud2nfs"
-      src_storage_class: "{{ platform_sc }}"
-      dst_storage_class: "nfs"
-      pv: true
-    - role: nginx-pv
-      namespace: "ng-gfs2def-noceph"
-      src_storage_class: "glusterfs-storage"
-      disable_ceph: true
-      pv: false
-    - role: nginx-pv
-      namespace: "ng-gfs2def"
-      src_storage_class: "glusterfs-storage"
-      pv: false
-    - role: nginx-pv
-      namespace: "ng-gblock2def"
-      src_storage_class: "glusterfs-storage-block"
-      pv: false
-    - role: nginx-pv
-      namespace: "ng-gfs2cloud"
-      src_storage_class: "glusterfs-storage"
-      dst_storage_class: "{{ platform_sc }}"
-      pv: true
-    - role: nginx-pv
-      namespace: "ng-gblock2cloud"
-      src_storage_class: "glusterfs-storage-block"
-      dst_storage_class: "{{ platform_sc }}"
-      pv: true
-    - role: nginx-pv
-      namespace: "ng-nfs2def"
-      src_storage_class: "nfs"
-      html_accessmode: ReadWriteMany
-      pv: false
-    - role: nginx-pv
-      namespace: "ng-nfs2cloud"
-      src_storage_class: "nfs"
-      dst_storage_class: "{{ platform_sc }}"
-      pv: true
+  #roles:
+
+  tasks:
+  - include_role:
+      name: migration_prepare
+
+  # include_role is bugged, and does not honor the tags. We encapsulate it in a "block" so taht tags can be honored.
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-cloud2cloud"
+        src_storage_class: "{{ platform_sc }}"
+        dst_storage_class: "{{ platform_sc }}"
+        pv: true
+    tags: [ source_cloud, target_cloud ]
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-cloud2rbd"
+        src_storage_class: "{{ platform_sc }}"
+        dst_storage_class: "csi-rbd"
+        pv: true
+    tags: [ source_cloud, target_ceph, target_cephrbd ]
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-cloud2cfs"
+        src_storage_class: "{{ platform_sc }}"
+        dst_storage_class: "csi-cephfs"
+        pv: true
+    tags: [ source_cloud, target_ceph, target_cephfs ]
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-cloud2nfs"
+        src_storage_class: "{{ platform_sc }}"
+        dst_storage_class: "nfs"
+        pv: true
+    tags: [ source_cloud, target_nfs ]
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-gfs2cloud"
+        src_storage_class: "glusterfs-storage"
+        dst_storage_class: "{{ platform_sc }}"
+        pv: true
+    tags: [ source_glusterfs, source_gfs-storage, target_cloud ]
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-gblock2cloud"
+        src_storage_class: "glusterfs-storage-block"
+        dst_storage_class: "{{ platform_sc }}"
+        pv: true
+    tags: [ source_glusterfs, source_gfs_storage_block, target_cloud ]
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-nfs2def"
+        src_storage_class: "nfs"
+        html_accessmode: ReadWriteMany
+        pv: false
+    tags: [ source_nfs, target_default ]
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-nfs2cloud"
+        src_storage_class: "nfs"
+        dst_storage_class: "{{ platform_sc }}"
+        pv: true
+    tags: [ source_nfs, target_cloud ]
+
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-gfs2def"
+        src_storage_class: "glusterfs-storage"
+        html_accessmode: ReadWriteMany
+        pv: false
+    tags: [ source_glusterfs, source_gfs-storage, target_default ]
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-noceph-gfs2def"
+        src_storage_class: "glusterfs-storage"
+        disable_ceph: true
+        pv: false
+    tags: [ source_glusterfs, source_gfs-storage, target_default ]
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-gblock2def"
+        src_storage_class: "glusterfs-storage-block"
+        pv: false
+    tags: [ source_glusterfs, source_gfs_storage_block, target_default ]
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-noceph-gblock2def"
+        src_storage_class: "glusterfs-storage-block"
+        disable_ceph: true
+        pv: false
+    tags: [ source_glusterfs, source_gfs_storage_block, target_default ]
+
   vars_files:
     - "{{ playbook_dir }}/config/mig_controller.yml"
     - "{{ playbook_dir }}/config/defaults.yml"
