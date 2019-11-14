@@ -1,0 +1,12 @@
+- name: Check namespace
+  k8s_facts:
+    kind: Namespace
+    name: "{{ namespace }}"
+  register: ns
+
+- name: Create namespace
+  shell: "{{ oc_binary }} new-project {{ namespace }} --skip-config-write=true"
+  when: ns.resources | length == 0
+
+- name: Create openshift cake-php application from openshift templates
+  shell: "{{ oc_binary }} -n {{ namespace }} new-app --template django-psql-persistent"

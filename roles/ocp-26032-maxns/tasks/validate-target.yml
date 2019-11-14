@@ -1,0 +1,13 @@
+- name: "Check if migration {{ migration_name }} has a warning"
+  k8s_facts:
+    kind: MigPlan
+    api_version: v1alpha1
+    namespace: "{{ migration_namespace }}"
+    name: "{{ migration_plan_name }}"
+  register: mig_plan
+  until:  mig_plan.resources[0].status.get('conditions', {}) | list | selectattr( "type", "equalto", "NamespaceLimitExceeded") | selectattr( "category", "equalto", "Critical") | list | length > 0
+  retries: 5
+
+- name: "Max-namespaces critical condition found"
+  debug: 
+    msg: "{{ mig_plan.resources[0].status.get('conditions', {}) | list | selectattr( 'type', 'equalto', 'NamespaceLimitExceeded') | selectattr( 'category', 'equalto', 'Critical') | list }}"

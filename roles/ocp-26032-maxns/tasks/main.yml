@@ -1,0 +1,32 @@
+- name: Generate namespaces
+  set_fact:
+    max_ns_namespaces: "{{ max_ns_namespaces|default([]) + ['max-namespaces-' + item|string]}}"
+  with_sequence: "1-{{ max_namespaces|int + 1 }}" 
+  loop_control:
+    label: "{{ 'Generated namespace name: max-namespaces-' + item|string }}"
+
+#- name: Cleanup resources
+#  import_role:
+#    name: migration_cleanup
+#  vars:
+#    namespace: "{{ max_ns_namespaces }}"
+#  when: with_cleanup|bool
+
+- name: Create resources
+  import_tasks: deploy.yml
+  when: with_deploy|bool
+
+- name: Start migration
+  import_tasks: migrate.yml
+  ignore_errors: yes
+  vars:
+    namespace: "{{ max_ns_namespaces }}"
+  when: with_migrate|bool
+
+- name: Validate source
+  import_tasks: validate-source.yml
+  when: (with_validate|bool) and (with_deploy|bool)
+
+- name: Validate migration
+  import_tasks: validate-target.yml
+  when: (with_validate|bool) and (with_migrate|bool)
