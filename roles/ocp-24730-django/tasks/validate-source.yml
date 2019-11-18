@@ -36,6 +36,7 @@
     status_code: 200
     return_content: true
   register: page_content
+  until: page_content.status == 200
   with_sequence: "1-{{ num_visits }}"
 
 # /health uri will return the number of visits that the database has stored
