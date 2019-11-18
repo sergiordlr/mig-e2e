@@ -1,6 +1,3 @@
-- name: Get oc version
-  include_role:
-    name: migration_getfacts
 
 - name: Cleanup resources
   include_role:
@@ -20,5 +17,9 @@
   when: with_migrate|bool
 
 - name: Validate source
-  import_tasks: validate.yml
-  when: with_validate|bool  
+  import_tasks: validate-source.yml
+  when: (with_validate|bool) and (with_deploy|bool)
+
+- name: Validate migration
+  import_tasks: validate-target.yml
+  when: (with_validate|bool) and (with_migrate|bool)

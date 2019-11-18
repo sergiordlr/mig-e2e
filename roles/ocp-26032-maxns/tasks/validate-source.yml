@@ -1,0 +1,11 @@
+- name: Check external image nodes status
+  k8s_facts:
+    kind: Pod
+    namespace: "{{ item }}"
+    label_selectors: "app={{ default_app_name }}"
+    field_selectors:
+    - status.phase==Running
+  register: pod
+  until: pod.resources | length == default_replicas | int
+  retries: 120
+  loop: "{{ max_ns_namespaces }}"

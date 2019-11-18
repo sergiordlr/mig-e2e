@@ -1,0 +1,4 @@
+- name: Deploy project with labels and selectors
+  k8s:
+    state : present
+    definition: "{{ lookup('template', 'deployment.yml.j2' )}}"

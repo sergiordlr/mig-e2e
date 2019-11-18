@@ -1,12 +1,18 @@
-namespace: ocp-24995-role
-rolebinding_name: basic-role-binding
-rolename: basic-role
+namespace: ocp-25986-maxpods
+
+num_pods: 11
+pod_limit: 10
+
+default_replicas: "{{ num_pods }}"
+default_app_name: nginx
 
 migration_sample_name: "{{ namespace }}"
 migration_plan_name: "{{ migration_sample_name }}-migplan-{{ ansible_date_time.epoch }}"
 migration_name: "{{ migration_sample_name }}-mig-{{ ansible_date_time.epoch }}"
-
+#migration_sample_files: "{{ playbook_dir }}/mig-controller/docs/scenarios/{{ migration_sample_name }}"
 with_deploy: true
 with_migrate: true
 with_cleanup: true
 with_validate: true
+pv: false
+quiesce: false
