@@ -16,7 +16,8 @@
     - { role: ocp-24659-mysql, tags: ["ocp-24659-mysql", "ocp"] }
     - { role: ocp-24686-project, tags: ["ocp-24686-project", "ocp"] }
     - { role: ocp-24769-cakephp, tags: ["ocp-24769-cakephp", "ocp"] }
-    - { role: ocp-24730-django, tags: ["ocp-24730-django", "ocp"] }
+    # 3.7 -> 4.x migration failing for django because 9.5 postgres image does not exist in 4.x
+    - { role: ocp-24730-django, tags: ["never", "ocp-24730-django"] }
     - { role: ocp-26032-maxns, tags: ["ocp-26032-maxns", "ocp"] }
   vars_files:
     - "{{ playbook_dir }}/config/mig_controller.yml"
