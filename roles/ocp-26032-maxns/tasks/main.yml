@@ -1,16 +1,16 @@
 - name: Generate namespaces
   set_fact:
     max_ns_namespaces: "{{ max_ns_namespaces|default([]) + ['max-namespaces-' + item|string]}}"
-  with_sequence: "1-{{ max_namespaces|int + 1 }}" 
+  with_sequence: "1-{{ num_namespaces }}" 
   loop_control:
     label: "{{ 'Generated namespace name: max-namespaces-' + item|string }}"
 
-#- name: Cleanup resources
-#  import_role:
-#    name: migration_cleanup
-#  vars:
-#    namespace: "{{ max_ns_namespaces }}"
-#  when: with_cleanup|bool
+- name: Cleanup resources
+  include_role:
+    name: migration_cleanup
+  vars:
+    namespace: "{{ max_ns_namespaces|default([]) }}"
+  when: with_cleanup|bool
 
 - name: Create resources
   import_tasks: deploy.yml

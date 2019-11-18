@@ -1,7 +1,9 @@
 namespace: ocp-25986-maxpods
 
-max_pods: 10
-default_replicas: "{{ max_pods | int + 1 }}"
+num_pods: 11
+pod_limit: 10
+
+default_replicas: "{{ num_pods }}"
 default_app_name: nginx
 
 migration_sample_name: "{{ namespace }}"

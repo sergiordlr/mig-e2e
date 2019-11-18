@@ -1,4 +1,5 @@
-max_namespaces: 10
+num_namespaces: 5
+namespace_limit: 4
 
 
 default_replicas: 1
