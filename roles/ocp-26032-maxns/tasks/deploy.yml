@@ -1,0 +1,22 @@
+- name: Check namespaces
+  k8s_facts:
+    kind: Namespace
+    name: "{{ item }}"
+  register: ns
+  loop: "{{ max_ns_namespaces }}"
+
+- name: Create namespaces
+  shell: "{{ oc_binary }} new-project {{ item.item }} --skip-config-write=true"
+  when: item.resources | length == 0
+  loop: "{{ ns.results }}"
+
+- name: Deploy pods in namespaces
+  k8s:
+    state : present
+    namespace : "{{ item.item }}"
+    definition: "{{ lookup('template', 'deployment.yml.j2' )}}"
+  vars:
+    namespace: "{{ item.item }}"
+    replicas: "{{ default_replicas }}"
+    app_name: "{{ default_app_name }}"
+  loop: "{{ ns.results }}"

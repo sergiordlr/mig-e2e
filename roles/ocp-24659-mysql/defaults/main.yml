@@ -1,0 +1,21 @@
+namespace: ocp-24659-mysql
+
+app_name: mysql
+storage_size: 1Mi
+
+
+migration_sample_name: "{{ namespace }}"
+migration_plan_name: "{{ migration_sample_name }}-migplan-{{ ansible_date_time.epoch }}"
+migration_name: "{{ migration_sample_name }}-mig-{{ ansible_date_time.epoch }}"
+#migration_sample_files: "{{ playbook_dir }}/mig-controller/docs/scenarios/{{ migration_sample_name }}"
+with_deploy: true
+with_migrate: true
+with_cleanup: true
+with_validate: true
+pv: false
+quiesce: false
+src_storage_class: default
+pv_action: copy
+pv_copy_method: filesystem
+accessmode: ReadWriteOnce
+no_warnings_allowed: true

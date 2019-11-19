@@ -1,7 +1,3 @@
-- name: Get oc version
-  include_role:
-    name: migration_getfacts
-
 - name: Cleanup resources
   include_role:
     name: migration_cleanup
@@ -19,6 +15,6 @@
   import_tasks: track.yml
   when: with_migrate|bool
 
-- name: Validate source
+- name: Validate
   import_tasks: validate.yml
-  when: with_validate|bool  
+  when: (with_validate|bool)

@@ -31,5 +31,5 @@
 - name: Set apis
   set_fact:
     cronjob_api: "{{ apis.cronjob.get(oc_version, apis.cronjob.get('default')) }}"
-
-- debug: msg={{ cronjob_api }}
+    role_api: "{{ apis.role.get(oc_version, apis.role.get('default')) }}"
+    rolebinding_api: "{{ apis.rolebinding.get(oc_version, apis.rolebinding.get('default')) }}"
