@@ -64,7 +64,7 @@
  
 - fail:
     msg: "Ceph is not installed, but the storageclass {{ item.storageClass }} for {{ item.pvc.name }} volume in migplan {{ migration_plan_name }} has no warning. There should be a warnig."
-  when:  not ceph_installed and item.storageClass in (glusterfs_scs + nfs_scs) and ( ceph_warns|length != 1 or not item.name in ceph_warns[0].message )
+  when:  not ceph_installed and item.storageClass is defined and item.storageClass in (glusterfs_scs) and ( ceph_warns|length != 1 or not item.name in ceph_warns[0].message )
   loop: "{{ fact_migrated_plan.spec.get('persistentVolumes', []) }}"
 
 - name: Get all warnings
@@ -74,7 +74,7 @@
 - name: Remove ceph warning if ceph not isntalled and there are gluster or nfs classes
   set_fact:
     all_warns: "{{ all_warns | rejectattr( 'type', 'equalto', 'PvWarnNoCephAvailable')  | list }}"
-  when:  not ceph_installed and item.storageClass in (glusterfs_scs + nfs_scs) and ( ceph_warns|length != 1 or not item.name in ceph_warns[0].message )
+  when:  not ceph_installed and item.storageClass is defined and item.storageClass in (glusterfs_scs) and ( ceph_warns|length != 1 or not item.name in ceph_warns[0].message )
   loop: "{{ fact_migrated_plan.spec.get('persistentVolumes', []) }}"
 
 - name: There are warnings!
