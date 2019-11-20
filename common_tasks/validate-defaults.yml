@@ -2,7 +2,7 @@
   debug: msg={{fact_migrated_plan}}
 
 - name: Get storage classes info
-  k8s_info:
+  k8s_facts:
     kind: StorageClass
   register: storage_classes
   until: storage_classes.resources[0]  | length > 0
