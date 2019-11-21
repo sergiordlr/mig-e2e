@@ -1,7 +1,7 @@
 namespace: ocp-24659-mysql
 
 app_name: mysql
-storage_size: 1Mi
+storage_size: 1Gi
 
 
 migration_sample_name: "{{ namespace }}"
