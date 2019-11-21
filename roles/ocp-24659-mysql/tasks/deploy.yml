@@ -35,7 +35,7 @@
   shell: "{{ oc_binary }} -n {{ namespace }} logs {{ (pod.resources|first).metadata.name }}"
   register: result
   until: result.stdout is search( 'socket.*/var/lib/mysql/mysql.sock.*port.*3306  MySQL Community Server \\(GPL\\)')
-  retries: 15
+  retries: 30
 
 - name: Provision the mysql database
   shell: "{{ oc_binary }} -n {{ namespace }} exec  {{ (pod.resources|first).metadata.name }} -- /bin/bash -c 'mysql -uMYSQL_USER -pMYSQL_PASSWORD MYSQL_DATABASE < /opt/app-root/src/data.sql'"
