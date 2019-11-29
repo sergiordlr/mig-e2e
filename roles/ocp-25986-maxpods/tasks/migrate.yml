@@ -7,15 +7,19 @@
   register: mig_controller
   until: mig_controller.resources | length > 0
 
-- name: Store controller config
+- name: Store controller config, removing the resource version
   set_fact:
-    previous_pod_limit: "{{ (mig_controller.resources|first).spec.get('mig_pod_limit', 100) }}"
+    previous_controller: >-
+                         {{ (mig_controller.resources|first)|
+                          combine({'metadata':{
+                                                'name': (mig_controller.resources|first).metadata.name,
+                                                'namespace': (mig_controller.resources|first).metadata.namespace } }) }}
 
-- name: Update mig controller
+- name: Update mig controller with the new pod limit
   k8s:
     api_version: migration.openshift.io/v1alpha1
     namespace: "{{ migration_namespace }}"
-    definition: "{{ (mig_controller.resources|first) | combine({ 'spec': {'mig_pod_limit': pod_limit } }) }}"
+    definition: "{{ previous_controller | combine({ 'spec': {'mig_pod_limit': pod_limit|string } }) }}"
 
 - pause:
     prompt: Wait 1 minute for controller reconciliation

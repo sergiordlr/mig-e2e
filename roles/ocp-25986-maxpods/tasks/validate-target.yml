@@ -12,18 +12,8 @@
   debug: 
     msg: "{{ mig_plan.resources[0].status.get('conditions', {}) | list | selectattr( 'type', 'equalto', 'PodLimitExceeded') | selectattr( 'category', 'equalto', 'Warn') | list }}"
 
-
-- name: Get mig controller information to restore the original limit
-  k8s_facts:
-    api_version: migration.openshift.io/v1alpha1
-    kind: MigrationController
-    name: migration-controller
-    namespace: "{{ migration_namespace }}"
-  register: mig_controller
-  until: mig_controller.resources | length > 0
-
 - name: Restore mig controller initial limit values
   k8s:
     api_version: migration.openshift.io/v1alpha1
     namespace: "{{ migration_namespace }}"
-    definition: "{{ (mig_controller.resources|first) | combine({ 'spec': {'mig_pod_limit': previous_pod_limit|int } }) }}"
+    definition: "{{ previous_controller }}"
