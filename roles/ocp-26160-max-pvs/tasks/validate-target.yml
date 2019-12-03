@@ -1,0 +1,27 @@
+- name: Check if migration plan has a critical condition
+  fail:
+    msg: "Migration plan should have a PvLimitExceeded warning, but this warning is not present"
+  when: fact_migrated_plan.status.get('conditions', {}) | list | selectattr( "type", "equalto", "PvLimitExceeded") | selectattr( "category", "equalto", "Warn") | list | length == 0
+
+- name: Max-namespaces warning condition found
+  debug: 
+    msg: "{{ fact_migrated_plan.status.get('conditions', {}) | list | selectattr( 'type', 'equalto', 'PvLimitExceeded') | selectattr( 'category', 'equalto', 'Warn') | list }}"
+
+- name: All namespaces
+  debug:
+    msg: "{{ all_namespaces }}"
+
+- name: Get mig controller information to restore the original limit
+  k8s_facts:
+    api_version: migration.openshift.io/v1alpha1
+    kind: MigrationController
+    name: migration-controller
+    namespace: "{{ migration_namespace }}"
+  register: mig_controller
+  until: mig_controller.resources | length > 0
+
+- name: Restore mig controller initial limit values
+  k8s:
+    api_version: migration.openshift.io/v1alpha1
+    namespace: "{{ migration_namespace }}"
+    definition: "{{ (mig_controller.resources|first) | combine({ 'spec': {'mig_pv_limit': previous_pv_limit|int } }) }}"

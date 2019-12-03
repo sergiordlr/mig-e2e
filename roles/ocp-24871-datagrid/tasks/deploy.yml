@@ -1,0 +1,32 @@
+#- name: Check that datagrid-service application exists in openshift namespace as a template
+#  k8s_facts:
+#    api_version: template.openshift.io/v1
+#    kind: Template
+#    name: "datagrid-service"
+#    namespace: openshift
+#  register: app_template
+#  until: app_template.resources|length > 0
+#  retries: 3
+  
+- name: Check namespace
+  k8s_facts:
+    kind: Namespace
+    name: "{{ namespace }}"
+  register: ns
+
+- name: Create namespace
+  shell: "{{ oc_binary }} new-project {{ namespace }} --skip-config-write=true"
+  when: ns.resources | length == 0
+
+- name: Create openshift datagrid application from openshift templates
+  shell: "{{ oc_binary }} -n {{ namespace }} new-app --template datagrid-service -p APPLICATION_USER={{ app_user }} -p APPLICATION_PASSWORD={{ app_password }} -p NUMBER_OF_INSTANCES={{ num_dg_instances }}"
+
+- name: Expose the application service via route
+  shell: "{{ oc_binary }} -n {{ namespace }} create route reencrypt datagrid-service-https --port=https --service datagrid-service"
+
+- name: Create a hot-rod basic client
+  shell: "{{ oc_binary }} process -f {{ hotrod_client_sourcecode }} -p HOTROD_PASSWORD={{ app_password }} -p HOTROD_USER={{ app_user }}  | {{ oc_binary }} -n {{ namespace }} create -f -"
+
+- name: Create a cronjob basic rest client
+  shell: "oc process -f {{ cronjob_insert_sourcecode }} -p CACHE={{ rest_cache_name }} -p CRON_NAME={{ cron_name }} -p DATAGRID_USERNAME={{ app_user }} -p DATAGRID_PASSWORD={{ app_password }} | oc -n {{ namespace }} create -f -"
+

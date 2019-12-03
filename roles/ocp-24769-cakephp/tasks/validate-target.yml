@@ -6,7 +6,7 @@
     field_selectors: 
     - status.phase=Running
   register: mysqlpod
-  until: "true in (mysqlpod | json_query('resources[].status.containerStatuses[].ready'))"
+  until: " mysqlpod.resources|length > 0 and (true in (mysqlpod | json_query('resources[].status.containerStatuses[].ready')))"
   retries: 30
 
 - name: Check application pod status
@@ -18,6 +18,7 @@
     - status.phase=Running
   register: apppod
   until: "true in (apppod | json_query('resources[].status.containerStatuses[].ready'))"
+  until: " apppod.resources|length > 0 and (true in (apppod | json_query('resources[].status.containerStatuses[].ready')))"
   retries: 30
 
 - name: Get route

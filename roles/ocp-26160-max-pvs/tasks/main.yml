@@ -1,0 +1,54 @@
+- name: Generate namespaces
+  set_fact:
+    all_namespaces: "{{ all_namespaces|default([]) + ['max-pvs-' + item|string]}}"
+  with_sequence: "1-{{ num_namespaces }}" 
+  loop_control:
+    label: "{{ 'Generated namespace name: max-pvs-' + item|string }}"
+
+- name: Cleanup resources
+  include_role:
+    name: migration_cleanup
+  vars:
+    namespace: all_namespaces|default([])
+  when: with_cleanup|bool
+
+- name: Deploy application in namespaces
+  include_role:
+    name: "{{ deployed_role }}"
+  vars:
+    namespace: "{{ namespace_item }}"
+    with_migrate: false
+  loop: "{{ all_namespaces }}"
+  loop_control:
+    loop_var: namespace_item
+  when: (with_validate|bool) and (with_deploy|bool)
+
+
+- name: Start migration
+  import_tasks: migrate.yml
+  vars:
+    namespace: "{{ all_namespaces }}"
+  when: with_migrate|bool
+
+- name: Track migration
+  import_tasks: track.yml
+  when: with_migrate|bool
+
+- name: Validate migration
+  import_tasks: validate-target.yml
+  when: (with_validate|bool) and (with_migrate|bool)
+
+
+- name: Validate application in namespaces
+  include_role:
+    name: "{{ deployed_role }}"
+  vars:
+    namespace: "{{ namespace_item }}"
+    with_migrate: false
+    with_cleanup: false
+    with_validate_target: true
+  loop: "{{ all_namespaces }}"
+  loop_control:
+    loop_var: namespace_item
+  # This variables seem to collide with the ones in the "vars" section. We need to be careful, and negate "deploy" instead of using "migrate"
+  when: (with_validate|bool) and not (with_deploy|bool)

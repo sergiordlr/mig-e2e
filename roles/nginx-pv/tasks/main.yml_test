@@ -1,0 +1,5 @@
+#- name: Create resources
+#  import_tasks: disable_ceph.yml
+
+- name: Create resources
+  import_tasks: enable_ceph.yml
