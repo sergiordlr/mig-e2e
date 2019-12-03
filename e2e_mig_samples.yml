@@ -21,6 +21,7 @@
     - { role: ocp-24730-django, tags: ["never", "ocp-24730-django"] }
     - { role: ocp-26032-maxns, tags: ["ocp-26032-maxns", "ocp"] }
     - { role: ocp-26160-max-pvs, tags: ["ocp-26160-max-pvs", "ocp"] }
+    - { role: ocp-24787-redis, tags: ["ocp-24787-redis", "ocp"] }
   vars_files:
     - "{{ playbook_dir }}/config/mig_controller.yml"
     - "{{ playbook_dir }}/config/defaults.yml"
