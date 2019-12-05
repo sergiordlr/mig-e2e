@@ -34,3 +34,7 @@
 - name: Restore ceph storage classes
   import_tasks: restore_ceph.yml
   when: with_migrate|bool and disable_ceph is defined and disable_ceph|bool
+
+- name: Close migration plan
+  import_tasks: common_tasks/close_plan.yml
+  when: with_migrate|bool

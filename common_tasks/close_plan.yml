@@ -1,0 +1,19 @@
+- name: Close migration plan
+  k8s:
+    name: "{{ fact_migrated_plan.metadata.name }}"
+    namespace: "{{ fact_migrated_plan.metadata.namespace }}"
+    definition: "{{ fact_migrated_plan | combine({ 'metadata':{}, 'spec': {'closed': true }}) }}"
+
+- name: Check that the migration plan was actually closed
+  k8s_facts:
+    kind: MigPlan
+    api_version: v1alpha1
+    name: "{{ fact_migrated_plan.metadata.name }}"
+    namespace: "{{ fact_migrated_plan.metadata.namespace }}"
+  register: mig_plan
+  until: >-
+        mig_plan.resources|length > 0 and 
+        (mig_plan.resources[0].get( 'status', {}).get("conditions", {}) | 
+                               selectattr( 'type', 'equalto', 'Closed') | 
+                               selectattr( 'status', 'equalto', 'True') | list | length > 0)
+  retries: 20

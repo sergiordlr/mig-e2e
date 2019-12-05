@@ -6,6 +6,7 @@
     - { role: robot-shop, tags: ["robot-shop"] }
     - { role: parks-app, tags: ["parks-app"], pv_action: 'copy', src_storage_class: 'glusterfs-storage' }
     - { role: mediawiki, tags: ["mediawiki"], pv_action: 'copy', src_storage_class: 'glusterfs-storage', dst_storage_class: 'csi-cephfs' }
+    - { role: ocp-24871-datagrid, tags: ["ocp-24871-datagrid", "ocp"] }
     - { role: ocp-25000-sets, tags: ["ocp-25000-sets", "ocp"] }
     - { role: ocp-25021-cronjob, tags: ["never", "ocp-25021-cronjob", "ocp"] }
     - { role: ocp-25090-jobs, tags: ["ocp-25090-jobs", "ocp"] }
@@ -22,7 +23,6 @@
     - { role: ocp-26160-max-pvs, tags: ["ocp-26160-max-pvs", "ocp"] }
     - { role: ocp24797-mongodb, tags: ["ocp24797-mongodb", "ocp"] }
     - { role: ocp-24787-redis, tags: ["ocp-24787-redis", "ocp"] }
-    - { role: ocp-24871-datagrid, tags: ["ocp-24871-datagrid", "ocp"] }
   vars_files:
     - "{{ playbook_dir }}/config/mig_controller.yml"
     - "{{ playbook_dir }}/config/defaults.yml"

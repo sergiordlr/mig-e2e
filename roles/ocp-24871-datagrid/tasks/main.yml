@@ -1,11 +1,11 @@
-#- name: Cleanup resources
-#  include_role:
-#    name: migration_cleanup
-#  when: with_cleanup|bool
+- name: Cleanup resources
+  include_role:
+    name: migration_cleanup
+  when: with_cleanup|bool
 
-#- name: Create resources
-#  import_tasks: deploy.yml
-#  when: with_deploy|bool
+- name: Create resources
+  import_tasks: deploy.yml
+  when: with_deploy|bool
 
 - name: Start migration
   import_tasks: migrate.yml

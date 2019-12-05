@@ -9,7 +9,7 @@
   include_role:
     name: migration_cleanup
   vars:
-    namespace: all_namespaces|default([])
+    namespace: "{{ all_namespaces|default([]) }}"
   when: with_cleanup|bool
 
 - name: Deploy application in namespaces

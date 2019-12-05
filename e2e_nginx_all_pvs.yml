@@ -1,13 +1,19 @@
 - hosts: localhost
   vars:
     platform_sc: gp2
+    src_ocs_rwo: glusterfs-storage-block
+    src_ocs_rwx: glusterfs-storage
+    tgt_ocs_rwo: csi-rbd 
+    tgt_ocs_rwx: csi-cephfs
+    src_nfs: nfs
+    tgt_nfs: nfs
   #roles:
 
   tasks:
   - include_role:
       name: migration_prepare
 
-  # include_role is bugged, and does not honor the tags. We encapsulate it in a "block" so taht tags can be honored.
+  # include_role is bugged, and does not honor the tags. We encapsulate it in a "block" so that tags can be honored.
   - block:
     - include_role:
         name: nginx-pv
@@ -23,21 +29,21 @@
     - include_role:
         name: nginx-pv
       vars:
-        namespace: "ng-cloud2rbd"
+        namespace: "ng-cloud2ocso"
         src_storage_class: "{{ platform_sc }}"
-        dst_storage_class: "csi-rbd"
+        dst_storage_class: "{{ tgt_ocs_rwo }}"
         pv: true
-    tags: [ ng-cloud2rbd ,source_cloud, target_ceph, target_cephrbd ]
+    tags: [ ng-cloud2ocso ,source_cloud, target_ocs, target_ocso ]
 
   - block:
     - include_role:
         name: nginx-pv
       vars:
-        namespace: "ng-cloud2cfs"
+        namespace: "ng-cloud2ocsx"
         src_storage_class: "{{ platform_sc }}"
-        dst_storage_class: "csi-cephfs"
+        dst_storage_class: "{{ tgt_ocs_rwx}}"
         pv: true
-    tags: [ ng-cloud2cfs, source_cloud, target_ceph, target_cephfs ]
+    tags: [ ng-cloud2ocsx, source_cloud, target_ocsx, target_ocsx ]
 
   - block:
     - include_role:
@@ -45,7 +51,7 @@
       vars:
         namespace: "ng-cloud2nfs"
         src_storage_class: "{{ platform_sc }}"
-        dst_storage_class: "nfs"
+        dst_storage_class: "{{ tgt_nfs }}"
         pv: true
     tags: [ ng-cloud2nfs, source_cloud, target_nfs ]
 
@@ -53,21 +59,21 @@
     - include_role:
         name: nginx-pv
       vars:
-        namespace: "ng-gfs2cloud"
-        src_storage_class: "glusterfs-storage"
+        namespace: "ng-ocsx2cloud"
+        src_storage_class: "{{ src_ocs_rwx }}"
         dst_storage_class: "{{ platform_sc }}"
         pv: true
-    tags: [ ng-gfs2cloud, source_glusterfs, source_gfs-storage, target_cloud ]
+    tags: [ ng-ocsx2cloud, source_ocs, source_ocsx, target_cloud ]
 
   - block:
     - include_role:
         name: nginx-pv
       vars:
-        namespace: "ng-gblock2cloud"
-        src_storage_class: "glusterfs-storage-block"
+        namespace: "ng-ocso2cloud"
+        src_storage_class: "{{ src_ocs_rwo }}"
         dst_storage_class: "{{ platform_sc }}"
         pv: true
-    tags: [ ng-gblock2cloud, source_glusterfs, source_gfs_storage_block, target_cloud ]
+    tags: [ ng-ocso2cloud, source_ocs, source_ocso, target_cloud ]
 
 
   - block:
@@ -75,8 +81,8 @@
         name: nginx-pv
       vars:
         namespace: "ng-nfs2nfs"
-        src_storage_class: "nfs"
-        dst_storage_class: "nfs"
+        src_storage_class: "{{ src_nfs }}"
+        dst_storage_class: "{{ tgt_nfs }}"
         html_accessmode: ReadWriteMany
         pv: true
         # BZ https://bugzilla.redhat.com/show_bug.cgi?id=1761483 
@@ -89,7 +95,7 @@
         name: nginx-pv
       vars:
         namespace: "ng-nfs2def"
-        src_storage_class: "nfs"
+        src_storage_class: "{{ src_nfs }}"
         html_accessmode: ReadWriteMany
         pv: false
     tags: [ ng-nfs2def, source_nfs, target_default ]
@@ -99,7 +105,7 @@
         name: nginx-pv
       vars:
         namespace: "ng-noceph-nfs2def"
-        src_storage_class: "nfs"
+        src_storage_class: "{{ src_nfs }}"
         disable_ceph: true
         pv: false
     tags: [ ng-noceph-nfs2def, source_nfs, target_default ]
@@ -109,7 +115,7 @@
         name: nginx-pv
       vars:
         namespace: "ng-nfs2cloud"
-        src_storage_class: "nfs"
+        src_storage_class: "{{ src_nfs }}"
         dst_storage_class: "{{ platform_sc }}"
         pv: true
     tags: [ ng-nfs2cloud, source_nfs, target_cloud ]
@@ -119,60 +125,60 @@
     - include_role:
         name: nginx-pv
       vars:
-        namespace: "ng-gfs2def"
-        src_storage_class: "glusterfs-storage"
+        namespace: "ng-ocsx2def"
+        src_storage_class: "{{ src_ocs_rwx }}"
         html_accessmode: ReadWriteMany
         pv: false
-    tags: [ ng-gfs2def, source_glusterfs, source_gfs-storage, target_default ]
+    tags: [ ng-ocsx2def, source_ocs, source_ocsx, target_default ]
 
   - block:
     - include_role:
         name: nginx-pv
       vars:
-        namespace: "ng-gfs2cephrbd"
-        src_storage_class: "glusterfs-storage"
-        dst_storage_class: "csi-rbd"
+        namespace: "ng-ocsx2ocsx"
+        src_storage_class: "{{ src_ocs_rwx }}"
+        dst_storage_class: "{{ tgt_ocs_rwx }}"
         pv: true
-    tags: [ ng-gfs2cephrbd, source_glusterfs, source_gfs-storage, target_ceph, target_cephrbd]
+    tags: [ ng-ocsx2ocsx, source_ocs, source_ocsx, target_ocs, target_ocsx]
 
   - block:
     - include_role:
         name: nginx-pv
       vars:
-        namespace: "ng-noceph-gfs2def"
-        src_storage_class: "glusterfs-storage"
+        namespace: "ng-noceph-ocsx2def"
+        src_storage_class: "{{ src_ocs_rwx }}"
         disable_ceph: true
         pv: false
-    tags: [ ng-noceph-gfs2def, source_glusterfs, source_gfs-storage, target_default ]
+    tags: [ ng-noceph-ocsx2def, source_ocs, source_ocsx, target_default ]
 
   - block:
     - include_role:
         name: nginx-pv
       vars:
-        namespace: "ng-gblock2def"
-        src_storage_class: "glusterfs-storage-block"
+        namespace: "ng-ocso2def"
+        src_storage_class: "{{ src_ocs_rwo }}"
         pv: false
-    tags: [ ng-gblock2def, source_glusterfs, source_gfs_storage_block, target_default ]
+    tags: [ ng-ocso2def, source_ocs, source_ocso, target_default ]
 
   - block:
     - include_role:
         name: nginx-pv
       vars:
-        namespace: "ng-noceph-gblock2def"
-        src_storage_class: "glusterfs-storage-block"
+        namespace: "ng-noceph-ocso2def"
+        src_storage_class: "{{ src_ocs_rwo }}"
         disable_ceph: true
         pv: false
-    tags: [ ng-noceph-gblock2def, source_glusterfs, source_gfs_storage_block, target_default ]
+    tags: [ ng-noceph-ocso2def, source_ocs, source_ocso, target_default ]
 
   - block:
     - include_role:
         name: nginx-pv
       vars:
-        namespace: "ng-gblock2cephfs"
-        src_storage_class: "glusterfs-storage-block"
-        dst_storage_class: "csi-cephfs"
+        namespace: "ng-ocso2ocsx"
+        src_storage_class: "{{ src_ocs_rwo }}"
+        dst_storage_class: "{{ tgt_ocs_rwx }}"
         pv: true
-    tags: [ng-gblock2cephfs , source_glusterfs, source_gfs_storage_block, target_ceph, target_cephfs ]
+    tags: [ng-ocso2ocsx , source_ocs, source_ocso, target_ocs, target_ocsx ]
 
   - block:
     - include_role:
