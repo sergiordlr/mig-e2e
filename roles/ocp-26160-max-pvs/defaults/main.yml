@@ -1,0 +1,21 @@
+num_namespaces: 3
+# In every namespace we will deploy this role.
+# The nginx-pv role uses 2 pvs,
+# hence, 3 namespaces will imply 6 PVs to migrate. 2 pvs each.
+deployed_role: nginx-pv
+pv_limit: 5
+
+
+#default_replicas: 1
+#default_app_name: nginx
+
+migration_sample_name: "max-pvs"
+migration_plan_name: "{{ migration_sample_name }}-migplan-{{ ansible_date_time.epoch }}"
+migration_name: "{{ migration_sample_name }}-mig-{{ ansible_date_time.epoch }}"
+#migration_sample_files: "{{ playbook_dir }}/mig-controller/docs/scenarios/{{ migration_sample_name }}"
+mpv_with_deploy: true
+mpv_with_migrate: true
+mpv_with_cleanup: true
+mpv_with_validate: true
+pv: false
+quiesce: false

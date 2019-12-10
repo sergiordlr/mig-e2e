@@ -17,7 +17,7 @@
 
 - name: Validate default storageclasses
   import_tasks: common_tasks/validate-defaults.yml
-  when: (with_validate|bool) and (with_migrate|bool)
+  when: ((with_validate|bool) and (with_migrate|bool)) or (with_validate_source|default(false)|bool)
 
 - name: Track migration
   import_tasks: track.yml
@@ -25,11 +25,11 @@
 
 - name: Validate source
   import_tasks: validate-source.yml
-  when: (with_validate|bool) and (with_deploy|bool)
+  when: ((with_validate|bool) and (with_deploy|bool)) or (with_validate_source|default(false)|bool)
 
 - name: Validate migration
   import_tasks: validate-target.yml
-  when: (with_validate|bool) and (with_migrate|bool)
+  when: ((with_validate|bool) and (with_migrate|bool)) or (with_validate_target|default(false)|bool)
 
 - name: Restore ceph storage classes
   import_tasks: restore_ceph.yml

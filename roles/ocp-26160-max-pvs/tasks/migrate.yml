@@ -1,0 +1,31 @@
+- name: Get mig controller information
+  k8s_facts:
+    api_version: migration.openshift.io/v1alpha1
+    kind: MigrationController
+    name: migration-controller
+    namespace: "{{ migration_namespace }}"
+  register: mig_controller
+  until: mig_controller.resources | length > 0
+
+- name: Store controller config, removing the resource version
+  set_fact:
+    previous_controller: >-
+                         {{ (mig_controller.resources|first)|
+                          combine({'metadata':{ 
+                                                'name': (mig_controller.resources|first).metadata.name, 
+                                                'namespace': (mig_controller.resources|first).metadata.namespace } }) }}
+
+- name: Update mig controller
+  k8s:
+    api_version: migration.openshift.io/v1alpha1
+    namespace: "{{ migration_namespace }}"
+    definition: "{{ previous_controller | combine({ 'spec': {'mig_pv_limit': pv_limit|string } }) }}"
+
+- pause:
+    prompt: Wait 1 minute for controller reconciliation
+    minutes: 1
+
+- name: Execute migration
+  include_role:
+    name: migration_run
+
