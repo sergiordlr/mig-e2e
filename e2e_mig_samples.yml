@@ -13,7 +13,7 @@
     - { role: ocp-24997-confmap, tags: ["ocp-24997-confmap", "ocp"] }
     - { role: ocp-24995-role, tags: ["ocp-24995-role", "ocp"] }
     - { role: ocp-25986-maxpods, tags: ["ocp-25986-maxpods", "ocp"] }
-    - { role: nginx-pv, tags: ["nginx-pv", "ocp"] }
+    - { role: nginx-pv, tags: ["never", "nginx-pv", "ocp"] }
     - { role: ocp-24659-mysql, tags: ["ocp-24659-mysql", "ocp"] }
     - { role: ocp-24686-project, tags: ["ocp-24686-project", "ocp"] }
     - { role: ocp-24769-cakephp, tags: ["ocp-24769-cakephp", "ocp"] }
