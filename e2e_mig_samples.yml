@@ -5,7 +5,7 @@
     - { role: sock-shop, tags: ["sock-shop"] }
     - { role: robot-shop, tags: ["robot-shop"] }
     - { role: parks-app, tags: ["parks-app"], pv_action: 'copy', src_storage_class: 'glusterfs-storage' }
-    - { role: mediawiki, tags: ["mediawiki"], pv_action: 'copy', src_storage_class: 'glusterfs-storage', dst_storage_class: 'csi-cephfs' }
+    - { role: mediawiki, tags: ["never", "mediawiki"], pv_action: 'copy', src_storage_class: 'glusterfs-storage', dst_storage_class: 'csi-cephfs' }
     - { role: ocp-25000-sets, tags: ["ocp-25000-sets", "ocp"] }
     - { role: ocp-25021-cronjob, tags: ["never", "ocp-25021-cronjob"] }
     - { role: ocp-25090-jobs, tags: ["ocp-25090-jobs", "ocp"] }
