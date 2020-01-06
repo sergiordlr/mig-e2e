@@ -12,6 +12,14 @@
   debug: 
     msg: "{{ mig_plan.resources[0].status.get('conditions', {}) | list | selectattr( 'type', 'equalto', 'NamespaceLimitExceeded') | selectattr( 'category', 'equalto', 'Critical') | list }}"
 
+- name: Remove the blocked execution
+  k8s:
+    api_version: migration.openshift.io/v1alpha1
+    state: absent
+    kind: MigMigration
+    name: "{{ migration_name }}"
+    namespace: "{{ migration_namespace }}"
+
 - name: Restore mig controller initial limit values
   k8s:
     api_version: migration.openshift.io/v1alpha1
