@@ -16,6 +16,10 @@
     state : present
     namespace : "{{ namespace }}"
     definition: "{{ lookup('template', 'deployment.yml.j2' )}}"
+  register: res
+  until: res is success
+  retries: 12
+  delay: 10
   vars:
     app_name: "{{ ext_app_name }}"
     sleep_time: 1d
@@ -27,6 +31,10 @@
     state : present
     namespace : "{{ namespace }}"
     definition: "{{ lookup('template', 'deployment.yml.j2' )}}"
+  register: res
+  until: res is success
+  retries: 12
+  delay: 10
   vars:
     app_name: "{{ int_app_name }}"
     sleep_time: 1d
@@ -38,6 +46,10 @@
     state : present
     namespace : "{{ namespace }}"
     definition: "{{ lookup('template', 'deployment.yml.j2' )}}"
+  register: res
+  until: res is success
+  retries: 12
+  delay: 10
   vars:
     app_name: "{{ fast_app_name }}"
     sleep_time: 1
