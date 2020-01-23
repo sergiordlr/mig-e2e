@@ -16,6 +16,6 @@
     namespace: "{{ namespace }}"
     label_selectors: "app=restify"
   register: s2i
-  until: s2i.resources[0].get("status", {}).get("phase", "") == "Complete"
+  until: s2i.resources | length > 0 and s2i.resources[0].get("status", {}).get("phase", "") == "Complete"
   retries: 30
   delay: 10
