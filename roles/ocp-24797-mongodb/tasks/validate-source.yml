@@ -1,0 +1,34 @@
+- name: Check mongodb pod status
+  k8s_facts:
+    kind: Pod
+    namespace: "{{ namespace }}"
+    label_selectors: "app=mongodb-persistent"
+    field_selectors: 
+    - status.phase=Running
+  register: pod
+  until: "true in (pod | json_query('resources[].status.containerStatuses[].ready'))"
+  retries: 40
+
+- name: Copy mongodb provision script to pod
+  shell: "{{ oc_binary }} -n {{ namespace }} cp {{ role_path }}/files/mongodb.js {{ (pod.resources|first).metadata.name }}:/tmp/mongodb.js"
+  register: result
+  until: result.rc == 0
+
+- name: Load data in mongodb database
+  shell: "{{ oc_binary }} -n {{ namespace }} exec {{ (pod.resources|first).metadata.name }} -- /bin/bash -c \"mongo sampledb -u {{ mongodb_user }} -p {{ mongodb_pass }} < /tmp/mongodb.js\""
+  register: output
+  until: output.rc == 0 and output.stdout != ''
+  retries: 5
+
+- name: Retrieve and validate inserted data
+  shell: "{{ oc_binary }} -n {{ namespace }} exec {{ (pod.resources|first).metadata.name }} -- /bin/bash -c \"mongo  sampledb -u {{ mongodb_user }} -p {{ mongodb_pass }} --eval 'db.test_db.find().forEach(function(results){results._id=results._id.valueOf();printjson(results)})' --quiet\""
+  register: output
+  until: output.rc == 0 and output.stdout != ''
+  retries: 5
+
+- fail:
+    msg: "Inserted data not present"
+  loop: "{{ output.stdout_lines }}"
+  loop_control: 
+    index_var: index
+  when: output.stdout_lines|length < 2 or (item|from_json).get("a", null) != index|int
