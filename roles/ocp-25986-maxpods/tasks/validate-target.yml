@@ -6,7 +6,8 @@
     name: "{{ migration_plan_name }}"
   register: mig_plan
   until:  mig_plan.resources[0].status.get('conditions', {}) | list | selectattr( "type", "equalto", "PodLimitExceeded") | selectattr( "category", "equalto", "Warn") | list | length > 0
-  retries: 5
+  retries: 12
+  delay: 10
 
 - name: "Max-pods warning found"
   debug: 
