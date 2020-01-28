@@ -10,6 +10,16 @@
   when: item.resources | length == 0
   loop: "{{ ns.results }}"
 
+- name: Ensure namespaces are present
+  k8s_facts:
+    kind: Namespace
+    name: "{{ item.item }}"
+  register: ns_check
+  until: ns_check.resources | length > 0
+  retries: 6
+  delay: 5
+  loop: "{{ ns.results }}"
+
 - name: Deploy pods in namespaces
   k8s:
     state : present
