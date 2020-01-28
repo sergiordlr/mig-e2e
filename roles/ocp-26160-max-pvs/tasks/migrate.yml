@@ -21,11 +21,10 @@
     namespace: "{{ migration_namespace }}"
     definition: "{{ previous_controller | combine({ 'spec': {'mig_pv_limit': pv_limit|string } }) }}"
 
-- pause:
-    prompt: Wait 1 minute for controller reconciliation
-    minutes: 1
 
 - name: Execute migration
   include_role:
     name: migration_run
+  vars:
+    wait_for_warnings: true
 

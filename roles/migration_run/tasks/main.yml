@@ -23,6 +23,18 @@
 - set_fact:
     mig_velero_pause: true
 
+- name: Warnings must be present. Waiting for warnings.
+  k8s_facts:
+    kind: MigPlan
+    api_version: v1alpha1
+    namespace: "{{ migration_namespace }}"
+    name: "{{ migration_plan_name }}"
+  register: mig_plan
+  until: mig_plan.resources|length > 0 and (mig_plan.resources[0].get( 'status', {}).get("conditions", {}) | selectattr( 'category', 'match', 'Warn|Critical') | list | length > 0)
+  retries: 30
+  delay: 5
+  when: wait_for_warnings|bool
+
 - name: Get plan information when ready
   k8s_facts:
     kind: MigPlan
