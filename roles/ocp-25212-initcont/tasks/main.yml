@@ -1,3 +1,6 @@
+- name: Get oc facts
+  include_role:
+    name: migration_getfacts
 
 - name: Cleanup resources
   include_role:
