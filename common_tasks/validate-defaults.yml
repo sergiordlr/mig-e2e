@@ -16,14 +16,14 @@
   set_fact:
     csi_cephfs: "{{ item.metadata.name }}"
     csi_cephfs_installed: True
-  when: item.provisioner == 'cephfs.csi.ceph.com'
+  when: item.provisioner == 'openshift-storage.cephfs.csi.ceph.com'
   loop: "{{ storage_classes.resources }}"
 
 - name: Get ceph rbd class name
   set_fact:
     csi_rbd: "{{ item.metadata.name }}"
     csi_rbd_installed: True
-  when: item.provisioner == 'rbd.csi.ceph.com'
+  when: item.provisioner == 'openshift-storage.rbd.csi.ceph.com'
   loop: "{{ storage_classes.resources }}"
 
 - name: Is ceph installed
