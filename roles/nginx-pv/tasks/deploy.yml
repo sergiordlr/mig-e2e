@@ -8,6 +8,15 @@
   shell: "{{ oc_binary }} new-project {{ namespace }} --skip-config-write=true"
   when: ns.resources | length == 0
 
+- name: Ensure namespaces are present
+  k8s_facts:
+    kind: Namespace
+    name: "{{ namespace }}"
+  register: ns_check
+  until: ns_check.resources | length > 0
+  retries: 6
+  delay: 5
+
 - name: Deploy nginx nodes
   k8s:
     state : present
