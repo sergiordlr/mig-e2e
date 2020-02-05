@@ -16,17 +16,24 @@
     state : present
     namespace : "{{ namespace }}"
     definition: "{{ lookup('template', 'deployment.yml.j2' )}}"
+  register: res
+  until: res is success
+  retries: 12
+  delay: 10
   vars:
     replicas: 1
     app_name: "{{ ext_app_name }}"
     init_image: docker.io/alpine
-
 
 - name: Deploy pods using internal image
   k8s:
     state : present
     namespace : "{{ namespace }}"
     definition: "{{ lookup('template', 'deployment.yml.j2' )}}"
+  register: res
+  until: res is success
+  retries: 12
+  delay: 10
   vars:
     replicas: 1
     app_name: "{{ int_app_name }}"

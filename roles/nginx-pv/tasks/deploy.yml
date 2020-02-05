@@ -21,6 +21,10 @@
   k8s:
     state : present
     definition: "{{ lookup('template', 'deployment.yml.j2' )}}"
+  register: res
+  until: res is success
+  retries: 12
+  delay: 10
   vars:
     storage_class: "{{ src_storage_class if src_storage_class is defined else 'default' }}"
 
