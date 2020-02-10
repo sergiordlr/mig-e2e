@@ -27,9 +27,10 @@
     label_selectors: "app=cakephp-mysql-persistent"
   register: app_route
   until: app_route.resources | length > 0
+  delay: 10
   retries: 30
 
-- name: Acces the html file
+- name: Access the html file
   uri:
     url: http://{{ app_route.resources[0].spec.host }}
     method: GET

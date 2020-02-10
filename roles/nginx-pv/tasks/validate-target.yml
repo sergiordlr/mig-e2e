@@ -14,11 +14,15 @@
     label_selectors: "app=nginx"
   register: nginx_route
 
-- name: Acces the html file
+- name: Access the html file
   uri:
     url: http://{{ nginx_route.resources[0].spec.host }}
     method: GET
     status_code: 200
+  register: res
+  retries: 30
+  delay: 10
+  until: res is success
 
 - name: Get /var/log/nginx/access.log file content
   shell: "{{ oc_binary }} -n {{ namespace }} rsh $({{ oc_binary }} get pods -n {{ namespace }} -o jsonpath='{.items[0].metadata.name}') cat /var/log/nginx/access.log "
