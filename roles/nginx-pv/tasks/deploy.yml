@@ -60,9 +60,12 @@
 - name: Upload an index html file
   shell: "{{ oc_binary }} -n {{ namespace }} rsh $( {{oc_binary}} get pods -n {{ namespace }} -o jsonpath='{.items[0].metadata.name}') sh -c 'echo \"<h1>HELLO WORLD</h1>\" > /usr/share/nginx/html/index.html'"
 
-- name: Acces the html file
+- name: Access the html file
   uri:
     url: http://{{ nginx_route.resources[0].spec.host }}
     method: GET
     status_code: 200
-
+  register: res
+  retries: 30
+  delay: 10
+  until: res is success
