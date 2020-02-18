@@ -25,6 +25,7 @@
     state : present
     namespace : "{{ item.item }}"
     definition: "{{ lookup('template', 'deployment.yml.j2' )}}"
+    wait: yes
   vars:
     namespace: "{{ item.item }}"
     replicas: "{{ default_replicas }}"
