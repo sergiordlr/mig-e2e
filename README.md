@@ -4,14 +4,14 @@ End to end tests for OCP 3 to 4 Migration
 ## Pre-requisites
 
 * OCP3 v3.7 (or higher) and OCP4 clusters, these would be the _source_ and _destination_ clusters used to migrate workloads
-* [mig-controller](https://github.com/fusor/mig-controller) must be deployed on _one of the two_ clusters
-* Velero must be deployed on both clusters and will be driven by mig-controller (see instructions [here](https://github.com/fusor/mig-controller#quick-start))
+* [mig-controller](https://github.com/konveyor/mig-controller) must be deployed on _one of the two_ clusters
+* Velero must be deployed on both clusters and will be driven by mig-controller (see instructions [here](https://github.com/konveyor/mig-controller#quick-start))
 * S3 temporary migration storage must be provisioned on AWS for mig-controller to consume
 * NFS or other compatible volume storage must be provisioned on both clusters for PVC based test
 
 ## Mig-controller config variables
 
-A number of parameters need to be set with the correct environment in order to create the CRs for migration purposes. A [sample](https://github.com/fusor/mig-e2e/config/mig_controller.yml.example) file is supplied, **please make changes as necessary**.
+A number of parameters need to be set with the correct environment in order to create the CRs for migration purposes. A [sample](https://github.com/konveyor/mig-e2e/config/mig_controller.yml.example) file is supplied, **please make changes as necessary**.
 
 See below for a decription of these paremeters :
 
