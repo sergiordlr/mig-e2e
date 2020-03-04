@@ -1,0 +1,35 @@
+- name: Check image streams
+  k8s_facts:
+    kind: ImageStream
+    namespace: "{{ namespace }}"
+    name: "{{ item.internal_image_name }}"
+  register: imagestream
+  until: imagestream.get('resources',[]) | length == 1
+  retries: 10
+  loop: "{{ image_streams }}"
+  loop_control:
+    label: "Check that imagestream {{ item.internal_image_name }} exists"
+
+- name: Check initial tags
+  k8s_facts:
+    kind: ImageStreamTag
+    namespace: "{{ namespace }}"
+    name: "{{ item.internal_image_name }}:{{ item.internal_image_tag }}"
+  register: istag
+  until: istag.get('resources',[]) | length == 1
+  retries: 10
+  loop: "{{ image_streams }}"
+  loop_control:
+    label: "Check that imagestream tag {{ item.internal_image_name}}:{{item.internal_image_tag }} exists"
+
+- name: Check extra tags
+  k8s_facts:
+    kind: ImageStreamTag
+    namespace: "{{ namespace }}"
+    name: "{{ item.0.internal_image_name }}:{{ item.1.name }}"
+  register: istag
+  until: istag.get('resources',[]) | length == 1
+  retries: 10
+  loop: "{{ image_streams|subelements('extra_tags') }}"
+  loop_control:
+    label: "Check that imagestream tag {{ item.0.internal_image_name}}:{{item.1.name }} exists"

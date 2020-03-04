@@ -1,0 +1,21 @@
+- name: Check namespace
+  k8s_facts:
+    kind: Namespace
+    name: "{{ namespace }}"
+  register: ns
+
+- name: Create namespace
+  shell: "{{ oc_binary }} new-project {{ namespace }} --skip-config-write=true"
+  when: ns.resources | length == 0
+
+- name: Import image to imagestream
+  shell: "{{ oc_binary }} -n {{ namespace }}  import-image {{ item.internal_image_name }}:{{ item.internal_image_tag }} --from {{ item.external_image_name }}:{{ item.external_image_tag }} --confirm"
+  loop: "{{ image_streams }}"
+  loop_control:
+    label: "{{ oc_binary }} -n {{ namespace }}  import-image {{ item.internal_image_name }}:{{ item.internal_image_tag }} --from {{ item.external_image_name }}:{{ item.external_image_tag }} --confirm"
+
+- name: Tag the imported images
+  shell: "{{ oc_binary }} -n  {{ namespace }} tag {{ item.0.internal_image_name }}:{{ item.0.internal_image_tag }}  {{ item.0.internal_image_name }}:{{ item.1.name }} --alias={{item.1.alias}}"
+  loop: "{{ image_streams|subelements('extra_tags') }}"
+  loop_control:
+    label: "{{ oc_binary }} -n  {{ namespace }} tag {{ item.0.internal_image_name }}:{{ item.0.internal_image_tag }}  {{ item.0.internal_image_name }}:{{ item.1.name }} --alias={{item.1.alias}}"
