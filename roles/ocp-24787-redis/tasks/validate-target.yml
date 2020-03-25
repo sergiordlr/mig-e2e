@@ -9,11 +9,12 @@
   until: "pod.resources|length >0 and (true in (pod | json_query('resources[].status.containerStatuses[].ready')))"
   retries: 40
 
-- name: Retreive and validate previously inserted data
+- name: Retrieve and validate previously inserted data
   shell: "{{ oc_binary }} -n {{ namespace }} exec {{ (pod.resources|first).metadata.name }} -- /bin/bash -c \"redis-cli -a {{ redis_password }} get mytestkey\""
   register: output
   until: output.rc == 0 and output.stdout != ''
-  retries: 5
+  delay: 10
+  retries: 12
 
 - fail:
     msg: "Previously inserted data not present"
@@ -22,19 +23,23 @@
 - name: Copy new redis provision script to pod
   shell: "{{ oc_binary }} -n {{ namespace }} cp {{ role_path }}/files/redis-2.cmds {{ (pod.resources|first).metadata.name }}:/tmp/redis-2.cmds"
   register: result
+  delay: 10
+  retries: 12
   until: result.rc == 0
 
 - name: Load new data in redis
   shell: "{{ oc_binary }} -n {{ namespace }} exec {{ (pod.resources|first).metadata.name }} -- /bin/bash -c \"redis-cli -a {{ redis_password }} < /tmp/redis-2.cmds\""
   register: output
   until: output.rc == 0 and output.stdout != ''
-  retries: 5
+  delay: 10
+  retries: 12
 
-- name: Retreive and validate new inserted data
+- name: Retrieve and validate new inserted data
   shell: "{{ oc_binary }} -n {{ namespace }} exec {{ (pod.resources|first).metadata.name }} -- /bin/bash -c \"redis-cli -a {{ redis_password }} hget user:1000 username\""
   register: output
   until: output.rc == 0 and output.stdout != ''
-  retries: 5
+  delay: 10
+  retries: 12
 
 - fail:
     msg: "New inserted data not present"

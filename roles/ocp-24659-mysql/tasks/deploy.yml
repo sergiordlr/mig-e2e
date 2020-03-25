@@ -15,7 +15,7 @@
   vars:
     storage_class: "{{ src_storage_class if src_storage_class is defined else 'default' }}"
 
-- name: Check nodes status
+- name: Check mysql status
   k8s_facts:
     kind: Pod
     namespace: "{{ namespace }}"

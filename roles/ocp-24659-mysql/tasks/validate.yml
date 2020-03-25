@@ -1,4 +1,4 @@
-- name: Check nodes status
+- name: Check mysql status
   k8s_facts:
     kind: Pod
     namespace: "{{ namespace }}"

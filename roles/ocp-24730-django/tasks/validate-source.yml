@@ -51,5 +51,5 @@
 
 - name: Check num visits
   fail:
-    msg: "Num visits has not the expected value. It should be {{ num_visits }} and the value retreived was {{ django_num_visits.content }}"
+    msg: "Num visits has not the expected value. It should be {{ num_visits }} and the value retrieved was {{ django_num_visits.content }}"
   when: django_num_visits.content|int != num_visits|int

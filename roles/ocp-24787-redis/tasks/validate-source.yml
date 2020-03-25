@@ -12,19 +12,23 @@
 - name: Copy redis provision script to pod
   shell: "{{ oc_binary }} -n {{ namespace }} cp {{ role_path }}/files/redis.cmds {{ (pod.resources|first).metadata.name }}:/tmp/redis.cmds"
   register: result
+  delay: 10
+  retries: 12
   until: result.rc == 0
 
 - name: Load data in redis
   shell: "{{ oc_binary }} -n {{ namespace }} exec {{ (pod.resources|first).metadata.name }} -- /bin/bash -c \"redis-cli -a {{ redis_password }} < /tmp/redis.cmds\""
   register: output
   until: output.rc == 0 and output.stdout != ''
-  retries: 5
+  delay: 10
+  retries: 12
 
-- name: Retreive and validate inserted data
+- name: Retrieve and validate inserted data
   shell: "{{ oc_binary }} -n {{ namespace }} exec {{ (pod.resources|first).metadata.name }} -- /bin/bash -c \"redis-cli -a {{ redis_password }} get mytestkey\""
   register: output
   until: output.rc == 0 and output.stdout != ''
-  retries: 5
+  delay: 10
+  retries: 12
 
 - fail:
     msg: "Inserted data not present"
