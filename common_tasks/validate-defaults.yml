@@ -41,16 +41,16 @@
   set_fact:
     nfs_scs: " {{ ['nfs'] }}"
 
-- name: Check if there are volumes with with wrong default values and retreive them
+- name: Check if there are volumes with with wrong default values and retrieve them
   set_fact:
     storage_classes_fail: "{{ storage_classes_fail|default([]) + [item] if (item.storageClass is defined) and (item.storageClass in (glusterfs_scs + nfs_scs)) and  ( ( 'ReadWriteMany' not in item.pvc.accessModes and  item.selection.storageClass != csi_rbd) or ( 'ReadWriteMany' in item.pvc.accessModes and  item.selection.storageClass != csi_cephfs) ) else [] }}"
-  when:  ceph_installed
+  when:  ceph_installed|bool
   loop: "{{ fact_migrated_plan.spec.get('persistentVolumes', []) }}"
 
 - fail:
     msg: "Wrong default storage class for {{ item.pvc.name }} in migplan {{ migration_plan_name }}"
   # If pv:true, it means that the class was forced, and not selected by default
-  when:  ceph_installed and not (pv|bool)
+  when:  ceph_installed|bool and not (pv|bool)
   loop: "{{ storage_classes_fail }}"
 
 

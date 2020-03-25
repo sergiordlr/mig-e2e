@@ -44,5 +44,5 @@
 
 - name: Check num visits
   fail:
-    msg: "Num visits has not the expected value. It should be {{ num_visits + 1 }} and the value retreived was {{ fact_cake_num_visits }}"
+    msg: "Num visits has not the expected value. It should be {{ num_visits + 1 }} and the value retrieved was {{ fact_cake_num_visits }}"
   when: fact_cake_num_visits|int != (num_visits|int + 1)
