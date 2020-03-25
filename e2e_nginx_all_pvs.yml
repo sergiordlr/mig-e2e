@@ -1,0 +1,208 @@
+- hosts: localhost
+  vars:
+    platform_sc: gp2
+    src_ocs_rwo: glusterfs-storage-block
+    src_ocs_rwx: glusterfs-storage
+    tgt_ocs_rwo: ocs-storagecluster-ceph-rbd
+    tgt_ocs_rwx: ocs-storagecluster-cephfs 
+    src_nfs: nfs
+    tgt_nfs: nfs
+
+  tasks:
+  - include_role:
+      name: migration_prepare
+
+  # include_role is bugged, and does not honor the tags. We encapsulate it in a "block" so that tags can be honored.
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-cloud2cloud"
+        src_storage_class: "{{ platform_sc }}"
+        dst_storage_class: "{{ platform_sc }}"
+        pv: true
+        no_warnings_allowed:  false
+    tags: [ ng-cloud2cloud, source_cloud, target_cloud ]
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-cloud2ocso"
+        src_storage_class: "{{ platform_sc }}"
+        dst_storage_class: "{{ tgt_ocs_rwo }}"
+        pv: true
+    tags: [ ng-cloud2ocso ,source_cloud, target_ocs, target_ocso ]
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-cloud2ocsx"
+        src_storage_class: "{{ platform_sc }}"
+        dst_storage_class: "{{ tgt_ocs_rwx}}"
+        pv: true
+    tags: [ ng-cloud2ocsx, source_cloud, target_ocs, target_ocsx ]
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-cloud2nfs"
+        src_storage_class: "{{ platform_sc }}"
+        dst_storage_class: "{{ tgt_nfs }}"
+        pv: true
+    tags: [ ng-cloud2nfs, source_cloud, target_nfs ]
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-ocsx2cloud"
+        src_storage_class: "{{ src_ocs_rwx }}"
+        dst_storage_class: "{{ platform_sc }}"
+        pv: true
+    tags: [ ng-ocsx2cloud, source_ocs, source_ocsx, target_cloud ]
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-ocso2cloud"
+        src_storage_class: "{{ src_ocs_rwo }}"
+        dst_storage_class: "{{ platform_sc }}"
+        pv: true
+    tags: [ ng-ocso2cloud, source_ocs, source_ocso, target_cloud ]
+
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-nfs2nfs"
+        src_storage_class: "{{ src_nfs }}"
+        dst_storage_class: "{{ tgt_nfs }}"
+        html_accessmode: ReadWriteMany
+        pv: true
+        # BZ https://bugzilla.redhat.com/show_bug.cgi?id=1761483 
+        # We have a warning here, but the migration must be fine.
+        no_warnings_allowed:  false
+    tags: [ ng-nfs2nfs, source_nfs, target_nfs ]
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-nfs2def"
+        src_storage_class: "{{ src_nfs }}"
+        html_accessmode: ReadWriteMany
+        pv: false
+    tags: [ ng-nfs2def, source_nfs, target_default ]
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-noceph-nfs2def"
+        src_storage_class: "{{ src_nfs }}"
+        disable_ceph: true
+        pv: false
+    tags: [ ng-noceph-nfs2def, source_nfs, target_default ]
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-nfs2cloud"
+        src_storage_class: "{{ src_nfs }}"
+        dst_storage_class: "{{ platform_sc }}"
+        pv: true
+    tags: [ ng-nfs2cloud, source_nfs, target_cloud ]
+
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-ocsx2def"
+        src_storage_class: "{{ src_ocs_rwx }}"
+        html_accessmode: ReadWriteMany
+        pv: false
+    tags: [ ng-ocsx2def, source_ocs, source_ocsx, target_default ]
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-ocsx2ocsx"
+        src_storage_class: "{{ src_ocs_rwx }}"
+        dst_storage_class: "{{ tgt_ocs_rwx }}"
+        pv: true
+    tags: [ ng-ocsx2ocsx, source_ocs, source_ocsx, target_ocs, target_ocsx]
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-noceph-ocsx2def"
+        src_storage_class: "{{ src_ocs_rwx }}"
+        disable_ceph: true
+        pv: false
+    tags: [ ng-noceph-ocsx2def, source_ocs, source_ocsx, target_default ]
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-ocso2def"
+        src_storage_class: "{{ src_ocs_rwo }}"
+        pv: false
+    tags: [ ng-ocso2def, source_ocs, source_ocso, target_default ]
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-noceph-ocso2def"
+        src_storage_class: "{{ src_ocs_rwo }}"
+        disable_ceph: true
+        pv: false
+    tags: [ ng-noceph-ocso2def, source_ocs, source_ocso, target_default ]
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-ocso2ocsx"
+        src_storage_class: "{{ src_ocs_rwo }}"
+        dst_storage_class: "{{ tgt_ocs_rwx }}"
+        pv: true
+    tags: [ng-ocso2ocsx , source_ocs, source_ocso, target_ocs, target_ocsx ]
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-nfsmove"
+        src_storage_class: ""
+        pv_action: move
+        html_accessmode: ReadWriteMany
+        pv: true
+    tags: [never , move]
+
+  - block:
+    - include_role:
+        name: nginx-pv
+      vars:
+        namespace: "ng-cloudsnapshot"
+        src_storage_class: "{{ platform_sc }}"
+        dst_storage_class: "{{ platform_sc }}"
+        pv: true
+        pv_copy_method: "snapshot"
+        no_warnings_allowed:  false
+    tags: [ ng-cloudsnapshot, source_cloud, target_cloud, snapshot ]
+
+
+  vars_files:
+    - "{{ playbook_dir }}/config/mig_controller.yml"
+    - "{{ playbook_dir }}/config/defaults.yml"
