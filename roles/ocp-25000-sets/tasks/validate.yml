@@ -1,6 +1,6 @@
 - name: Check daemon set
   k8s_facts:
-    api_version: extensions/v1beta1
+    api_version: "{{ daemonset_api }}"
     kind: DaemonSet
     namespace: "{{ namespace }}"
     name: "{{ daemonset.app_name }}"
@@ -10,7 +10,7 @@
 
 - name: Check replicaset
   k8s_facts:
-    api_version: extensions/v1beta1
+    api_version: "{{ replicaset_api }}"
     kind: ReplicaSet
     namespace: "{{ namespace }}"
     name: "{{ replicaset.app_name }}"
@@ -20,7 +20,7 @@
 
 - name: Check  statefulset
   k8s_facts:
-    api_version: apps/v1beta1
+    api_version: "{{ statefulset_api }}"
     kind: StatefulSet
     namespace: "{{ namespace }}"
     name: "{{ statefulset.app_name }}"
