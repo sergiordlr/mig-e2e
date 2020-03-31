@@ -2,7 +2,7 @@
   k8s_facts:
     kind: Pod
     namespace: "{{ namespace }}"
-    label_selectors: "app=redis-persistent"
+    label_selectors: "name=redis"
     field_selectors: 
     - status.phase=Running
   register: pod
