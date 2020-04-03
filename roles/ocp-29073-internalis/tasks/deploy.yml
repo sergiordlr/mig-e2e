@@ -1,0 +1,96 @@
+- name: Check namespace
+  k8s_facts:
+    kind: Namespace
+    name: "{{ namespace }}"
+  register: ns
+
+- name: Create namespace
+  shell: "{{ oc_binary }} new-project {{ namespace }} --skip-config-write=true"
+  when: ns.resources | length == 0
+
+- name: Check helper namespace
+  k8s_facts:
+    kind: Namespace
+    name: "{{ helper_namespace }}"
+  register: ns
+
+- name: Create helper namespace
+  shell: "{{ oc_binary }} new-project {{ helper_namespace }} --skip-config-write=true"
+  when: ns.resources | length == 0
+
+
+- name: Get previous mirroring pods if any
+  k8s_facts:
+    kind: Pod
+    namespace: "{{ helper_namespace }}"
+    label_selectors: "nsowner={{namespace}}"
+  register: prevmirror
+
+- name: Delete previous mirroring pods if any
+  k8s:
+    state : absent
+    kind : Pod
+    name: "{{ item.metadata.name }}"
+    namespace: "{{ item.metadata.namespace }}"
+  loop: "{{ prevmirror.resources }}"
+  loop_control:
+    label: "Deleted mirror pod {{ item.metadata.name }} from namespace {{ item.metadata.namespace }}"
+  when: prevmirror.resources | length > 0
+
+- name: Mirror image to imagestream
+  k8s:
+    state : present
+    definition: "{{ lookup('template', 'mirror_helper.yml.j2' )}}"
+  vars:
+    source_image: "{{ item.external_image_name }}:{{ item.external_image_tag }}"
+    target_image: "{{ namespace }}/{{item.internal_image_name}}:{{item.internal_image_tag}}"
+    internal_registry: "{{ default_registry }}"
+  loop: "{{ image_streams }}"
+  loop_control:
+    label: |
+           mirror:  {{ item.external_image_name }}:{{ item.external_image_tag }} 
+                --> {{ namespace }}/{{item.internal_image_name}}:{{item.internal_image_tag}}"
+
+- name: Wait until mirroring is done
+  k8s_facts:
+    kind: Pod
+    namespace: "{{ helper_namespace }}"
+    label_selectors: "nsowner={{namespace}}"
+    field_selectors: 
+    - status.phase=Succeeded
+  register: mirrorpod
+  until: mirrorpod.get( 'resources', []) | length == image_streams | length
+  retries: 10
+  loop: "{{ image_streams }}"
+
+- name: Tag the imported images
+  shell: "{{ oc_binary }} -n  {{ namespace }} tag {{ item.0.internal_image_name }}:{{ item.0.internal_image_tag }}  {{ item.0.internal_image_name }}:{{ item.1.name }} --alias={{item.1.alias}}"
+  loop: "{{ image_streams|subelements('extra_tags') }}"
+  loop_control:
+    label: "{{ oc_binary }} -n  {{ namespace }} tag {{ item.0.internal_image_name }}:{{ item.0.internal_image_tag }}  {{ item.0.internal_image_name }}:{{ item.1.name }} --alias={{item.1.alias}}"
+
+## BZ https://bugzilla.redhat.com/show_bug.cgi?id=1820250
+#  This bug breaks the following part. Once it's fixed the pods creation should be uncommented.
+#
+#- name: Create test pods to pull images
+#  k8s:
+#    state : present
+#    definition: "{{ lookup('template', 'testpod.yml.j2' )}}"
+#  vars:
+#    name: "usetag-{{ item.internal_image_tag }}"
+#    image: "{{ default_registry }}/{{ namespace }}/{{item.internal_image_name}}:{{item.internal_image_tag}}"
+#  loop: "{{ image_streams }}"
+#  loop_control:
+#    label: "Create pod for image {{ default_registry }}/{{ namespace }}/{{item.internal_image_name}}:{{item.internal_image_tag}}"
+#
+#- name: Create test pods to pull extra tags
+#  k8s:
+#    state : present
+#    definition: "{{ lookup('template', 'testpod.yml.j2' )}}"
+#  vars:
+#    name: "usetag-{{ item.1.name }}"
+#    image: "{{ default_registry }}/{{ namespace }}/{{item.0.internal_image_name}}:{{item.1.name}}"
+#  loop: "{{ image_streams|subelements('extra_tags') }}"
+#  loop_control:
+#    label: "Create pod for image {{ default_registry }}/{{ namespace }}/{{item.0.internal_image_name}}:{{item.1.name}}"
+#

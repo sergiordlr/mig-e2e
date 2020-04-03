@@ -23,6 +23,7 @@
     - { role: ocp-24797-mongodb, tags: ["ocp-24797-mongodb", "ocp"] }
     # This tests deploys the official datagrid service application in openshift. It doesnt exist before 3.11
     - { role: ocp-24871-datagrid, tags: ["never" ,"ocp-24871-datagrid"] }
+    - { role: ocp-29073-internalis, tags: ["ocp-29073-internalis", "ocp"] }
   vars_files:
     - "{{ playbook_dir }}/config/mig_controller.yml"
     - "{{ playbook_dir }}/config/defaults.yml"

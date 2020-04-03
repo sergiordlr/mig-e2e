@@ -1,0 +1,41 @@
+namespace: "ocp-29073-internalis"
+
+
+helper_namespace: "mirror-helper"
+source_image: "docker.io/library/alpine:latest"
+target_image: "{{ namespace }}/test-mirror:latest"
+
+
+image_streams:
+- external_image_name: docker.io/library/alpine
+  internal_image_name: internal-image
+  internal_image_tag: alp
+  external_image_tag: latest
+  extra_tags:
+  - name: tag1
+    alias: false
+  - name: tag2
+    alias: false
+- external_image_name: docker.io/library/busybox
+  internal_image_name: internal-image
+  internal_image_tag: busy
+  external_image_tag: latest
+  extra_tags:
+  - name: tag3
+    alias: false
+  - name: latest
+    alias: false
+  - name: tag4
+    alias: false
+
+
+migration_sample_name: "ocp-29073-internalis"
+migration_plan_name: "{{ migration_sample_name }}-migplan-{{ ansible_date_time.epoch }}"
+migration_name: "{{ migration_sample_name }}-mig-{{ ansible_date_time.epoch }}"
+#migration_sample_files: "{{ playbook_dir }}/mig-controller/docs/scenarios/{{ migration_sample_name }}"
+with_deploy: true
+with_migrate: true
+with_cleanup: true
+with_validate: true
+pv: false
+quiesce: true
