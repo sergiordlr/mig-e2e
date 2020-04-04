@@ -1,6 +1,6 @@
 - hosts: localhost
   tasks:
-    - name: Destroy all e2e tests
+    - name: Remove all e2e tests NS
       k8s:
         state: absent
         api_version: v1
@@ -19,3 +19,13 @@
         - ocp-25090-jobs
         - ocp-25212-initcont
         - ocp-24997-confmap
+        - ocp-24995-role
+        - ocp-25986-maxpods
+        - nginx-pv
+        - ocp-24659-mysql
+        - ocp-24686-project
+        - ocp-24769-cakephp
+        - ocp-26032-maxns
+        - ocp-26160-max-pvs
+        - ocp-24787-redis
+        - ocp-24797-mongodb
