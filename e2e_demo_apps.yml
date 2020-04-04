@@ -1,0 +1,10 @@
+- hosts: localhost
+  roles:
+    - { role: migration_prepare, tags: ["always"] }
+    - { role: sock-shop, tags: ["sock-shop"] }
+    - { role: robot-shop, tags: ["robot-shop"], pv_action: 'copy', src_storage_class: 'glusterfs-storage' }
+    - { role: parks-app, tags: ["parks-app"], pv_action: 'copy', src_storage_class: 'glusterfs-storage' }
+    - { role: mediawiki, tags: ["never", "mediawiki"], pv_action: 'copy', src_storage_class: 'glusterfs-storage', dst_storage_class: 'ocs-storagecluster-cephfs' }
+  vars_files:
+    - "{{ playbook_dir }}/config/mig_controller.yml"
+    - "{{ playbook_dir }}/config/defaults.yml"
