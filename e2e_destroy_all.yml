@@ -29,3 +29,6 @@
         - ocp-26160-max-pvs
         - ocp-24787-redis
         - ocp-24797-mongodb
+        - max-pvs-1
+        - max-pvs-2
+        - max-pvs-3
