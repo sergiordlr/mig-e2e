@@ -2,7 +2,7 @@
   roles:
     - { role: migration_prepare, tags: ["always"] }
     - { role: mssql-app, tags: ["mssql-app"], pv_action: 'copy', stage: 'true', dst_storage_class: 'ocs-storagecluster-cephfs' }
-    - { role: sock-shop, tags: ["sock-shop"] }
+    - { role: mysql-persistent, tags: ["mysql-persistent"] }
     - { role: parks-app, tags: ["parks-app"], pv_action: 'copy', src_storage_class: 'glusterfs-storage' }
     - { role: ocp-25000-sets, tags: ["ocp-25000-sets", "ocp"] }
     - { role: ocp-25021-cronjob, tags: ["never", "ocp-25021-cronjob"] }

@@ -1,5 +1,5 @@
 ---
-migration_sample_name: nfs-pv
+migration_sample_name: mysql-persistent
 migration_plan_name: "{{ migration_sample_name }}-migplan-{{ ansible_date_time.epoch }}"
 migration_name: "{{ migration_sample_name}}-mig-{{ ansible_date_time.epoch }}"
 migration_sample_files: "{{ playbook_dir }}/roles/{{ migration_sample_name }}/files"
