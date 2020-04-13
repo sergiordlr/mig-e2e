@@ -4,8 +4,8 @@
     namespace: "{{ namespace }}"
     label_selectors: "app={{ ext_app_name}}"
   register: pod
-  #until: "true in (pod | json_query('resources[].status.containerStatuses[].ready'))"
   until: pod | json_query('resources[*].status.containerStatuses[*].ready') | flatten |difference( [true] ) | length  == 0
+  delay: 10
   retries: 30
 
 - name: Check internal image nodes status
@@ -14,42 +14,46 @@
     namespace: "{{ namespace }}"
     label_selectors: "app={{ int_app_name }}"
   register: pod
-  #until: "true in (pod | json_query('resources[].status.containerStatuses[].ready'))"
   until: pod | json_query('resources[*].status.containerStatuses[*].ready') | flatten |difference( [true] ) | length  == 0
+  delay: 10
   retries: 30
 
-- name: Obtain  internal route
+- name: Obtain internal route
   k8s_facts:
     kind: Route
     namespace: "{{ namespace }}"
     label_selectors: "app={{ int_app_name }}"
   register: int_route
-  retries: 10
+  delay: 10
+  retries: 12
   until: int_route.resources | length > 0
 
-- name: Obtain  external route
+- name: Obtain external route
   k8s_facts:
     kind: Route
     namespace: "{{ namespace }}"
     label_selectors: "app={{ ext_app_name}}"
   register: ext_route
-  retries: 10
+  delay: 10
+  retries: 12
   until: ext_route.resources | length > 0
 
-- name: Acces the internal route content
+- name: Access the internal route content
   uri:
     url: http://{{ int_route.resources[0].spec.host }}
     method: GET
     return_content: yes
   register: this
-  retries: 10
+  delay: 10
+  retries: 12
   until: "'<h1>HELLO WORLD</h1>' in this.content"
 
-- name: Acces the external route content
+- name: Access the external route content
   uri:
     url: http://{{ ext_route.resources[0].spec.host }}
     method: GET
     return_content: yes
   register: this
-  retries: 10
+  delay: 10
+  retries: 12
   until: "'<h1>HELLO WORLD</h1>' in this.content"
