@@ -11,6 +11,10 @@
 - name: Import image to imagestream
   shell: "{{ oc_binary }} -n {{ namespace }}  import-image {{ internal_image_name }}:{{ internal_image_tag }} --from {{ external_image_name }} --confirm"
 
+- name: Allow import image-image to settle
+  pause:
+    seconds: 10
+
 - name: Deploy pods using external image
   k8s:
     state : present
@@ -38,4 +42,3 @@
     replicas: 1
     app_name: "{{ int_app_name }}"
     init_image: "{{ default_registry }}/{{ namespace }}/{{ internal_image_name }}:{{ internal_image_tag }}"
-
