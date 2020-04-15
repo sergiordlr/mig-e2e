@@ -1,0 +1,7 @@
+- hosts: localhost
+  roles:
+    - { role: migration_prepare, tags: ["always"] }
+    - { role: stateless, tags: ["stateless"] }
+  vars_files:
+    - "{{ playbook_dir }}/config/mig_controller.yml"
+    - "{{ playbook_dir }}/config/defaults.yml"
