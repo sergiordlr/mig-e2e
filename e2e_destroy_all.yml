@@ -9,7 +9,6 @@
       with_items:
         - nginx-example
         - mysql-persistent
-        - stateless
         - sock-shop
         - robot-shop
         - parks-app
