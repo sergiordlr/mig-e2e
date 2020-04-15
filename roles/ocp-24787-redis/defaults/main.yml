@@ -1,6 +1,7 @@
 namespace: ocp-24787-redis
 
 redis_password: "PASSWORD"
+redis_version: "latest"
 
 migration_sample_name: "{{ namespace }}"
 migration_plan_name: "{{ migration_sample_name }}-migplan-{{ ansible_date_time.epoch }}"

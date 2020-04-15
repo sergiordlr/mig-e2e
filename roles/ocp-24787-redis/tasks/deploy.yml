@@ -9,4 +9,4 @@
   when: ns.resources | length == 0
 
 - name: Create openshift redis application from openshift templates
-  shell: "{{ oc_binary }} -n {{ namespace }} new-app --template redis-persistent -p REDIS_PASSWORD={{ redis_password }}"
+  shell: "{{ oc_binary }} -n {{ namespace }} new-app --template redis-persistent -p REDIS_PASSWORD={{ redis_password }} -p REDIS_VERSION={{ redis_version }}"
