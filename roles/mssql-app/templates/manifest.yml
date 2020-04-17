@@ -102,11 +102,11 @@ spec:
         - containerPort: 1433
         resources:
           limits:
-            memory: "3Gi"
-            cpu: "2"
+            memory: "2Gi"
+            cpu: "1"
           requests:
-            memory: "3Gi"
-            cpu: "2"
+            memory: "2Gi"
+            cpu: "1"
         volumeMounts:
         - mountPath: "/var/opt/mssql/data"
           name: mssql-vol
