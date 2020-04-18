@@ -1,0 +1,13 @@
+- name: Cleanup resources
+  include_role:
+    name: migration_cleanup
+  when: with_cleanup|bool
+
+- name: Validate source
+  import_tasks: validate-source.yml
+  when: (with_validate|bool) and (with_deploy|bool)
+
+- name: Validate migration
+  import_tasks: validate-target.yml
+  when: (with_validate|bool) and (with_migrate|bool)
+
