@@ -1,23 +1,23 @@
 - name: To check velero pod is running
-  shell: "{{ oc_binary }} get pod -n {{ namespace }}"
+  shell: "{{ oc_binary }} get pod -n {{ migration_namespace }}"
   register: pod_info
 
 - debug:
     msg: "{{ pod_info }}"
 
 - fail:
-    msg: "Failed to import imagestreams internal-image in namespace {{ namespace }}"
+    msg: "Failed to import imagestreams internal-image in namespace {{ migration_namespace }}"
   when: not (pod_info.stdout is search("velero"))
 
 - name: To check if can get velero version from velero pod
-  shell: "{{ oc_binary }} -n {{ migration_namespace }} rsh $({{ oc_binary }} get pod -n {{ migration_namespace }}|awk '/velero/ {print $1}') velero version -n {{ migration_namespace }}"
+  shell: "{{ oc_binary }} -n {{ migration_namespace }} rsh $({{ oc_binary }} get pod -n {{ migration_namespace }}|awk '/velero/ {print $1}') /velero version" 
   register: velero_info 
 
 - debug:
     msg: "{{ velero_info }}"
 
-- fail:
-    msg: "Failed to import imagestreams internal-image in namespace {{ namespace }}"
-  when: not (velero_info.stdout is search("Version: v"))
- 
 
+- fail:
+    msg: "Failed to import imagestreams internal-image in namespace {{ migration_namespace }}"
+  when: not (velero_info.stdout is search("Version.*v")) 
+ 
