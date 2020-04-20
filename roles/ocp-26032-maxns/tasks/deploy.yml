@@ -26,6 +26,10 @@
     namespace : "{{ item.item }}"
     definition: "{{ lookup('template', 'deployment.yml.j2' )}}"
     wait: yes
+  register: res
+  until: res is success
+  retries: 6
+  delay: 10
   vars:
     namespace: "{{ item.item }}"
     replicas: "{{ default_replicas }}"
