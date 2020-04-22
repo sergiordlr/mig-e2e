@@ -4,8 +4,8 @@
     kind: Role
     namespace: "{{ namespace }}"
     name: "{{ rolename }}"
-  register: rolename
-  until: rolename.resources | length > 0
+  register: ret_role
+  until: ret_role.resources | length > 0
   retries: 30
 
 - name: Check RoleBinding
