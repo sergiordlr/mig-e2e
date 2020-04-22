@@ -1,0 +1,10 @@
+namespace: ocp-27335-velero-version 
+
+migration_sample_name: "{{ namespace }}"
+migration_plan_name: "{{ migration_sample_name }}-migplan-{{ ansible_date_time.epoch }}"
+migration_name: "{{ migration_sample_name }}-mig-{{ ansible_date_time.epoch }}"
+with_deploy: true
+with_migrate: true
+with_cleanup: true
+with_validate: true
+
