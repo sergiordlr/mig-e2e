@@ -1,0 +1,51 @@
+- name: Check namespace
+  k8s_facts:
+    kind: Namespace
+    name: "{{ namespace }}"
+  register: ns
+
+- name: Create namespace
+  shell: "{{ oc_binary }} new-project {{ namespace }} --skip-config-write=true"
+  when: ns.resources | length == 0
+
+
+- name: Get LimitRange
+  k8s_info:
+    kind: LimitRange
+    namespace: "{{ namespace }}"
+  register: limitrange
+  until: limitrange.resources | length > 0
+  ignore_errors: true
+
+- name: Remove LimitRanges so that default limit ranges dont interfere with the test
+  k8s:
+    kind: LimitRange
+    state : absent
+    namespace: "{{ namespace }}"
+    name: "{{ item.metadata.name }}"
+  loop: "{{ limitrange.resources | default([]) }}"
+
+- name: Create resource quota
+  k8s:
+    state : present
+    definition: "{{ lookup('template', 'resourcequota.yml.j2' )}}"
+
+- name: Create nginx deployment
+  k8s:
+    state : present
+    definition: "{{ lookup('template', 'nginx-deployment.yml.j2' )}}"
+
+- name: Wait unti nginx is up
+  k8s_facts:
+    kind: Pod
+    namespace: "{{ namespace }}"
+    label_selectors: "app={{ app_name }}"
+    field_selectors: 
+    - status.phase=Running
+  register: pod
+  until: "true in (pod | json_query('resources[].status.containerStatuses[].ready'))"
+  retries: 30
+
+- name: Upload an index html file
+  shell: "{{ oc_binary }} -n {{ namespace }} rsh $( {{oc_binary}} get pods -n {{ namespace }} -o jsonpath='{.items[0].metadata.name}') sh -c 'echo \"<h1>HELLO WORLD</h1>\" > /usr/share/nginx/html/index.html'"
+

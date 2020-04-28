@@ -41,6 +41,7 @@
     cronjob_api: "{{ apis.cronjob.get(oc_version, apis.cronjob.get('default')) }}"
     role_api: "{{ apis.role.get(oc_version, apis.role.get('default')) }}"
     rolebinding_api: "{{ apis.rolebinding.get(oc_version, apis.rolebinding.get('default')) }}"
+    deployment_api: "{{ apis.deployment.get(oc_version, apis.deployment.get('default')) }}"
     daemonset_api: "{{ apis.daemonset.get(oc_version, apis.daemonset.get('default')) }}"
     replicaset_api: "{{ apis.replicaset.get(oc_version, apis.replicaset.get('default')) }}"
     statefulset_api: "{{ apis.statefulset.get(oc_version, apis.statefulset.get('default')) }}"

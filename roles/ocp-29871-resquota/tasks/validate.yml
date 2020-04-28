@@ -1,0 +1,150 @@
+- name: Get Quota
+  k8s_info:
+    kind: ResourceQuota
+    namespace: "{{ namespace }}"
+  register: quota
+  retries: 20
+  until: quota.resources | length > 0
+
+- name: Get Pods
+  k8s_info:
+    kind: Pod
+    namespace: "{{ namespace }}"
+    label_selectors: "app={{ app_name }}"
+  register: pod
+  retries: 20
+  until: pod.resources | length > 0
+
+#- fail:
+#    msg: "There should be only one pod present, before and after the migration."
+#  when: pod.resources == 1
+
+- name: Scale deployment and check that no more pods are allowed
+  k8s:
+    api_version: "{{ deployment_api }}"
+    kind: Deployment
+    name: "{{ app_name }}-deployment"
+    namespace: "{{ namespace }}"
+    definition:
+      spec:
+        replicas: 2
+  register: scale
+
+- name: Get ReplicaSet
+  k8s_info:
+    api_version: "{{ deployment_api }}"
+    kind: ReplicaSet
+    namespace: "{{ namespace }}"
+    label_selectors: "app={{ app_name }}"
+  register: replica
+  until: replica.resources | length > 0
+
+#- fail:
+#    msg: "ReplicaSet should not have created new pods, because resourcequota does not allow it"
+#  when: (replica.resources | first ).status.get('conditions', {}) | list | selectattr( 'type', 'equalto', 'ReplicaFailure') | list | length == 0 
+
+- name: Scale down again
+  k8s:
+    api_version: "{{ deployment_api }}"
+    kind: Deployment
+    name: "{{ app_name }}-deployment"
+    namespace: "{{ namespace }}"
+    definition:
+      spec:
+        replicas: 1
+
+- name: Get Pods
+  k8s_info:
+    kind: Pod
+    namespace: "{{ namespace }}"
+    label_selectors: "app={{ app_name }}"
+  register: pod
+  retries: 20
+  until: pod.resources | length == 1
+
+- name: Check that no LoadBalancer can be created
+  k8s:
+    state : present
+    definition: "{{ lookup('template', 'service.yml.j2' ) }}"
+  vars:
+    service_type: 'LoadBalancer'
+    service_app: 'balancersvc'
+  register: lbalancer
+  ignore_errors: true
+
+- fail:
+    msg: "FAILURE. Resource quota should not allow to create more LoadBalancers"
+  when: lbalancer.failed != true or lbalancer.error != 403
+
+- name: Check that no NodePort can be created
+  k8s:
+    state : present
+    definition: "{{ lookup('template', 'service.yml.j2' )}}"
+  vars:
+    service_type: 'NodePort'
+    service_app: 'podeportrsvc'
+  register: nodeport
+  ignore_errors: true
+
+- fail:
+    msg: "FAILURE. Resource quota should not allow to create more NodePort services"
+  when: nodeport.failed != true or nodeport.error != 403
+
+- name: Check that a ClusterIP service can be created. No resourcequota limit reached.
+  k8s:
+    state : present
+    definition: "{{ lookup('template', 'service.yml.j2' )}}"
+  vars:
+    service_type: 'ClusterIP'
+    service_app: 'clustersvc'
+  register: clusterip
+
+- name: Remove the created ClusterIP service
+  k8s:
+    state : absent
+    definition: "{{ lookup('template', 'service.yml.j2' )}}"
+  vars:
+    service_type: 'ClusterIP'
+    service_app: 'clustersvc'
+  register: clusterip
+
+- name: Check that no more PVCs can be created
+  k8s:
+    state : present
+    definition: "{{ lookup('template', 'persistent-volume-claim.yml.j2' )}}"
+  register: pvc
+  ignore_errors: true
+
+- fail:
+    msg: "FAILURE. Resource quota should not allow to create pvcs"
+  when: pvc.failed != true or pvc.error != 403
+
+- name: Get route
+  k8s_facts:
+    kind: Route
+    namespace: "{{ namespace }}"
+    label_selectors: "app={{ app_name }}"
+  register: nginx_route
+  until: nginx_route.resources | length > 0
+  retries: 30
+
+- name: Wait for pods running
+  k8s_info:
+    kind: Pod
+    namespace: "{{ namespace }}"
+    label_selectors: "app={{ app_name }}"
+    field_selectors: 
+    - status.phase=Running
+  register: pod
+  retries: 20
+  until: pod.resources | length == 1
+
+- name: Acces the html file
+  uri:
+    url: http://{{ nginx_route.resources[0].spec.host }}
+    method: GET
+    status_code: 200
+  retries: 10
+  register: req
+  until: req.status == 200
+

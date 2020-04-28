@@ -1,0 +1,17 @@
+namespace: "ocp-29871-resquota"
+
+app_name: nginxapp
+storage_size: 1Mi
+html_accessmode: ReadWriteOnce
+logs_accessmode: ReadWriteOnce
+
+migration_sample_name: "ocp-29871-resquota"
+migration_plan_name: "{{ migration_sample_name }}-migplan-{{ ansible_date_time.epoch }}"
+migration_name: "{{ migration_sample_name }}-mig-{{ ansible_date_time.epoch }}"
+
+with_deploy: true
+with_migrate: true
+with_cleanup: true
+with_validate: true
+pv: false
+quiesce: false
