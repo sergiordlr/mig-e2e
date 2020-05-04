@@ -1,0 +1,45 @@
+# Allowed target_custers
+#      target_cluster: destination
+#      target_cluster: source
+#
+# Allowed phases
+#      phase: PreBackup
+#      phase: PostBackup
+#      phase: PreRestore
+#      phase: PostRestore
+#
+
+- name: Create hook resources
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'mig-hook.yml.j2') }}"
+  vars:
+    hook_name: "{{ item.hook_name }}"
+    custom: "{{ item.custom }}"
+    target_cluster: "{{ item.target_cluster }}"
+    playbook: "{{ item.playbook }}"
+  loop: "{{ migration_hooks }}"
+
+- name: Init hook list
+  set_fact:
+    hooks_list: >-
+     {{ hooks_list|default([]) + [{ 'executionNamespace': item.execution_namespace,
+                                  'serviceAccount': item.service_account,
+                                  'phase': item.phase,
+                                  'reference':
+                                      { 'name': item.hook_name,
+                                        'namespace': migration_namespace
+                                      }
+                                 }] }}
+  loop: "{{ migration_hooks }}"
+
+- name: Add hooks to migration plan
+  k8s:
+    api_version: migration.openshift.io/v1alpha1
+    kind: MigPlan
+    state: present
+    name: "{{ migration_plan_name }}"
+    namespace: "{{ migration_namespace }}"
+    definition:
+      spec:
+        hooks: "{{ hooks_list }}"

@@ -10,6 +10,11 @@
 - debug:
     msg: "Created migration plan : {{ migration_plan_name }}"
 
+
+- name: Add hooks
+  import_tasks: add_hooks.yml
+  when: migration_hooks|default([])|length > 0
+
 - name: Process PVs
   import_tasks: process_pvs.yml
   when: pv|default(false)|bool == true

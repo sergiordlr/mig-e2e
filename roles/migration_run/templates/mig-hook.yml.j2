@@ -1,0 +1,10 @@
+apiVersion: migration.openshift.io/v1alpha1
+kind: MigHook
+metadata:
+  name: {{ hook_name }}
+  namespace: {{ migration_namespace }}
+spec:
+  custom: {{ custom }}
+  image: quay.io/konveyor/hook-runner:latest
+  playbook: {{ playbook | string | b64encode }}
+  targetCluster: {{ target_cluster }}
