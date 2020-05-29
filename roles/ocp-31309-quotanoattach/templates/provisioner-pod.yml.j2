@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: provisioner-pod
+  namespace: {{ namespace }}
+  labels:
+    app: provision
+spec:
+  restartPolicy: OnFailure
+  containers:
+  - name: provisioner
+    resources:
+      limits:
+        cpu: "0.01"
+        memory: 128Mi
+    image: alpine
+    command: [ "/bin/sh", "-c", "--" ]
+    args: [ "echo 'data inserted' > /data/vol/data.txt ; dd if=/dev/urandom of=/data/vol/binary.rnd  bs=1000000  count=1" ]
+    volumeMounts:
+    - name: testvolume
+      mountPath: /data/vol
+  volumes:
+  - name: testvolume
+    persistentVolumeClaim:
+      claimName: quoatdev-test

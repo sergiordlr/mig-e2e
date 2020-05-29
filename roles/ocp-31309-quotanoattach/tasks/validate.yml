@@ -1,0 +1,38 @@
+- name: Get Quota
+  k8s_info:
+    kind: ResourceQuota
+    namespace: "{{ namespace }}"
+  register: quota
+  retries: 20
+  until: quota.resources | length > 0
+
+- name: Get Persistent Volume
+  k8s_info:
+    kind: PersistentVolumeClaim
+    namespace: "{{ namespace }}"
+    name: quoatdev-test
+  register: vol
+  retries: 10
+  until: vol.resources | length > 0
+
+- name: Validate the volume
+  k8s:
+    state : present
+    definition: "{{ lookup('template', 'validator-pod.yml.j2' )}}"
+
+
+- name: Wait until validation is done
+  k8s_facts:
+    kind: Pod
+    namespace: "{{ namespace }}"
+    label_selectors: "app=validation"
+    field_selectors: 
+    - status.phase=Succeeded
+  register: pod
+  until: pod.resources | length > 0
+  retries: 30
+
+- name: Validate the volume
+  k8s:
+    state : absent
+    definition: "{{ lookup('template', 'validator-pod.yml.j2' )}}"
