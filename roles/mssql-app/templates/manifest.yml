@@ -129,7 +129,6 @@ spec:
      nodePort: 32001
      port: 1433
      targetPort: 1433
- type: LoadBalancer
 
 ---
 apiVersion: apps/v1beta1

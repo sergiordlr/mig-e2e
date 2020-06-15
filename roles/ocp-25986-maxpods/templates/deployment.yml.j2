@@ -31,7 +31,6 @@ items:
       targetPort: 8081
     selector:
       app: {{ app_name }}
-    type: LoadBalancer
 - apiVersion: route.openshift.io/v1
   kind: Route
   metadata:
