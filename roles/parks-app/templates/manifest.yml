@@ -145,8 +145,6 @@ spec:
   selector:
     app: restify
     deploymentconfig: restify
-status:
-  loadBalancer: {}
 
 ---
 kind: DeploymentConfig
@@ -219,8 +217,6 @@ spec:
   portalIP: ''
   type: ClusterIP
   sessionAffinity: None
-status:
-  loadBalancer: {}
 
 ---
 apiVersion: v1
