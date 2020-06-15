@@ -17,3 +17,4 @@
   retries: 100
   delay: 3
   until: ns_list.resources|length == 0
+  loop: "{{ [namespace] if namespace is string else namespace }}"
