@@ -126,10 +126,8 @@ spec:
    app: mssql
  ports:
    - protocol: TCP
-     nodePort: 32001
      port: 1433
      targetPort: 1433
-
 ---
 apiVersion: apps/v1beta1
 kind: Deployment
