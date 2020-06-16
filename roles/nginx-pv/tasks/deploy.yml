@@ -23,7 +23,7 @@
     definition: "{{ lookup('template', 'deployment.yml.j2' )}}"
   register: res
   until: res is success
-  retries: 12
+  retries: 30
   delay: 10
   vars:
     storage_class: "{{ src_storage_class if src_storage_class is defined else 'default' }}"
@@ -37,7 +37,8 @@
     - status.phase=Running
   register: pod
   until: "true in (pod | json_query('resources[].status.containerStatuses[].ready'))"
-  retries: 40
+  retries: 60
+  delay: 3
 
 - name: Obtain route
   k8s_facts:
@@ -46,7 +47,8 @@
     label_selectors: "app={{ app_name }}"
   register: nginx_route
   until: nginx_route.resources | length > 0
-  retries: 30
+  retries: 60
+  delay: 3
 
 - name: Force an error to log in the error.log file
   uri:

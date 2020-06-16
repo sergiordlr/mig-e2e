@@ -2,7 +2,8 @@
   shell: "{{ oc_binary }} -n {{ namespace }} rsh $({{ oc_binary }} get pods -n {{ namespace }} -o jsonpath='{.items[0].metadata.name}') cat /var/log/nginx/access.log "
   register: output
   until: output.rc == 0 and output.stdout != ''
-  retries: 5
+  retries: 10
+  delay: 3
 
 - debug: msg={{ output.stdout_lines }}
   name: /var/log/nginx/access.log file content
@@ -21,7 +22,8 @@
   shell: "{{ oc_binary }} -n {{ namespace }} rsh $({{ oc_binary }} get pods -n {{ namespace }} -o jsonpath='{.items[0].metadata.name}') cat /var/log/nginx/error.log "
   register: output
   until: output.rc == 0 and output.stdout != ''
-  retries: 5
+  retries: 10
+  delay: 3
 
 - debug: msg={{ output.stdout_lines }}
   name: /var/log/nginx/error.log file content
