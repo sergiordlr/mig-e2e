@@ -7,7 +7,8 @@
     - status.phase=Running
   register: pod
   until: "true in (pod | json_query('resources[].status.containerStatuses[].ready'))"
-  retries: 60
+  retries: 100
+  delay: 3
 
 - name: Wait until service ready for connections
   shell: "{{ oc_binary }} -n {{ namespace }} logs {{ (pod.resources|first).metadata.name }}"
