@@ -5,7 +5,7 @@
     label_selectors: "app={{ app_name }}"
   register: pod
   until: "true in (pod | json_query('resources[].status.containerStatuses[].ready'))"
-  retries: 60
+  retries: 100
   delay: 3 
 
 - name: Obtain route
