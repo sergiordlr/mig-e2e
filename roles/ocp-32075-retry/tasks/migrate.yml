@@ -1,0 +1,33 @@
+- name: Migrate forcing a failue
+  block:
+  - name: Disable internal registry to create a connection problem
+    import_tasks: disable_internal_registry.yml
+
+  - name: Get velero last log line
+    shell: "oc -n openshift-migration logs $(oc get pods -n openshift-migration -l component=velero -o name)| tail -1"
+    register: velero_last_log
+    until: velero_last_log.rc == 0
+
+  - name: Execute migration
+    include_role:
+      name: migration_run
+
+  - name: Wait until velero reports a connection problem and retries once at least
+    shell: "oc -n openshift-migration logs $(oc get pods -n openshift-migration -l component=velero -o name) | tail -100"
+    register: velero_log
+    retries: 45
+    delay: 10
+    until: >
+          velero_log.rc == 0 and
+          (
+            velero_log.stdout|replace('\n', '') is  search( velero_last_log.stdout_lines[-1] + '.*copying image.*' + namespace+ '.*#0 failed, waiting.*#1 failed, waiting.*#2 failed, waiting') or
+            (
+              not velero_log.stdout|replace('\n', '') is search( velero_last_log.stdout_lines[-1]) and
+              velero_log.stdout|replace('\n', '') is search( 'copying image.*' + namespace+ '.*#0 failed, waiting [0-9+]s and then retrying')
+            )
+          )
+
+  always:
+  - name: Enable internal registry to fix the connection problem
+    import_tasks: enable_internal_registry.yml
+  when: with_migrate|bool

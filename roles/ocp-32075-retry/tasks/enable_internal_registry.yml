@@ -1,0 +1,11 @@
+- name: Enable internal registry. 3x cluster.
+  shell:  oc scale --replicas 1 -n openshift-cluster-version deployments/cluster-version-operator
+  register: disable3_command
+  until: disable3_command.rc == 0
+  when: oc_version is version('4.1', '<')
+
+- name: Enable internal registry. 4x cluster.
+  shell:  "oc patch configs.imageregistry.operator.openshift.io cluster -p '{\"spec\":{\"managementState\": \"Managed\"} }' --type='merge'"
+  register: disable3_command
+  until: disable3_command.rc == 0
+  when: not oc_version is version('4.1', '<')
